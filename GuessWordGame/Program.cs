@@ -6,9 +6,12 @@
         {
             var game = new Game();
 
+            UI.HideCursor();
             while (true)
             {
+                Input.ReadInput();
                 game.Update();
+                UI.UpdateUI();
             }
         }
     }
