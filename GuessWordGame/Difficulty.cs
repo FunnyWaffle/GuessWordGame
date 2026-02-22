@@ -21,14 +21,10 @@
 
         public bool TrySetDifficulty(string type)
         {
-            bool wasSetted;
+            bool wasSetted = false;
 
-            if (!TryGetDifficultyTypeByIndex(type, out var difficultyType)
-                && !TryGetDifficultyTypeEnumValue(type, out difficultyType))
-            {
-                wasSetted = false;
-            }
-            else
+            if (TryGetDifficultyTypeByIndex(type, out var difficultyType)
+                || TryGetDifficultyTypeEnumValue(type, out difficultyType))
             {
                 CurrentValue = difficultyType;
                 wasSetted = true;
