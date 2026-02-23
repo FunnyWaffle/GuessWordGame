@@ -14,6 +14,7 @@
             var keyInfo = Console.ReadKey(true);
 
             var key = keyInfo.Key;
+
             if (key == ConsoleKey.Spacebar)
                 return;
 

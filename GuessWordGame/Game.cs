@@ -68,6 +68,7 @@
                 _attempts.Reset();
                 _lettersBank.Reset();
                 _letterGuesser.Reset();
+                Reset();
             }
             else
             {
@@ -106,6 +107,11 @@
             _attempts.Count--;
 
             return false;
+        }
+        private void Reset()
+        {
+            _isDiffuicultyChosen = false;
+            _isWordGenerated = false;
         }
     }
 }

@@ -58,10 +58,9 @@
                 return;
             }
 
-            for (int i = 0; i < lastFrameSymbolsCount - line.Length; i++)
-            {
-                line += ' ';
-            }
+            var extraSymbols = lastFrameSymbolsCount - line.Length;
+            if (extraSymbols > 0)
+                line += new string(' ', extraSymbols);
 
             Console.WriteLine(line);
         }
