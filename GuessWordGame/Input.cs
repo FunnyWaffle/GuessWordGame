@@ -32,12 +32,7 @@
         private static void ClearValue()
         {
             var valueLenght = Value.Length;
-
-            Value = string.Empty;
-            for (var i = 0; i < valueLenght; i++)
-            {
-                Value += ' ';
-            }
+            Value = new string(' ', valueLenght);
         }
         private static void EmptyValue()
         {

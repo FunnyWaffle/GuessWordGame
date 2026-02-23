@@ -15,52 +15,84 @@
         private readonly Text _failedLettersUI = UI.CreateText("Failed letters: {0}");
         private readonly Text _loseMessageUI = UI.CreateText("You lost, because you spend all attempts.");
         private readonly Text _guessedWordsCountUI = UI.CreateText("Guessed words count: {0}");
-        public void PrintLoseMessage(bool isActive)
+        public void HandleDifficultyChange(DifficultyType? difficulty)
         {
-            _loseMessageUI.IsActive = isActive;
+            if (difficulty.HasValue)
+            {
+                _difficultyUIElement.Setparameters(difficulty.Value);
+                _difficultyUIElement.IsActive = true;
+                _failedLettersUI.IsActive = false;
+                _startSettingDificultyUIElement.IsActive = false;
+                _failSettingDificultyUIElement.IsActive = false;
+            }
+            else
+            {
+                _difficultyUIElement.IsActive = false;
+                _startSettingDificultyUIElement.IsActive = true;
+            }
         }
+        public void HandleDifficultyChangeFail(string message)
+        {
+            _failSettingDificultyUIElement.Setparameters(message);
+            _failSettingDificultyUIElement.IsActive = true;
+        }
+        public void HandleAttemptsCountChange(int count)
+        {
+            if (count > 0)
+            {
+                _leftAttemptsUIElement.Setparameters(count);
+                _leftAttemptsUIElement.IsActive = true;
+                _loseMessageUI.IsActive = false;
+            }
+            else if (count == 0)
+            {
+                _leftAttemptsUIElement.IsActive = false;
+                _loseMessageUI.IsActive = true;
+            }
+            else if (count < 0)
+            {
+                _leftAttemptsUIElement.IsActive = false;
+            }
+        }
+        public void HandleGuessedLettersChage(IEnumerable<char> letters)
+        {
+            if (letters.Any())
+            {
+                _guessedLettersUI.Setparameters(string.Concat(letters));
+                _guessedLettersUI.IsActive = true;
+            }
+            else
+            {
+                _guessedLettersUI.IsActive = false;
+            }
+        }
+        public void HandleFailedLettersChage(IEnumerable<char> letters)
+        {
+            if (letters.Any())
+            {
+                _failedLettersUI.Setparameters(string.Concat(letters));
+                _failedLettersUI.IsActive = true;
+            }
+            else
+            {
+                _failedLettersUI.IsActive = false;
+            }
+        }
+        public void HandleMaskChange(string mask)
+        {
+            if (string.IsNullOrEmpty(mask))
+                _wordMaskUI.IsActive = false;
+            else
+            {
+                _wordMaskUI.IsActive = true;
+                _wordMaskUI.Setparameters(mask);
+            }
+        }
+
         public void PrintGuessedWordsCount(bool isActive, int value)
         {
             _guessedWordsCountUI.IsActive = isActive;
             _guessedWordsCountUI.Setparameters(value);
-        }
-        public void PrintGuessedLetters(bool isActive, string letters)
-        {
-            _guessedLettersUI.IsActive = isActive;
-            _guessedLettersUI.Setparameters(letters);
-        }
-        public void PrintFailedLetters(bool isActive, string letters)
-        {
-            _failedLettersUI.IsActive = isActive;
-            _failedLettersUI.Setparameters(letters);
-        }
-        public void PrintMask(bool isActive, string mask)
-        {
-            _wordMaskUI.IsActive = isActive;
-            _wordMaskUI.Setparameters(mask);
-        }
-        public void SetLeftAttemptsUIElementState(bool isActive, int value)
-        {
-            _leftAttemptsUIElement.IsActive = isActive;
-            _leftAttemptsUIElement.Setparameters(value);
-        }
-        public void SetStartSettingDificultyUIElementActive(bool isActive)
-        {
-            _startSettingDificultyUIElement.IsActive = isActive;
-        }
-        public void ShowFailSettingDificultyUIElement(bool isActive, string arg = null)
-        {
-            if (arg != null)
-                _failSettingDificultyUIElement.Setparameters(arg);
-
-            _failSettingDificultyUIElement.IsActive = isActive;
-        }
-        public void PrintDifficulty(bool isActive, string value = null)
-        {
-            if (value != null)
-                _difficultyUIElement.Setparameters(value);
-
-            _difficultyUIElement.IsActive = isActive;
         }
     }
 }

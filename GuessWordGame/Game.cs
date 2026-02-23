@@ -6,22 +6,40 @@
         private readonly Difficulty _difficulty;
         private readonly WordBank _wordBank;
         private readonly LettersBank _lettersBank;
+        private readonly Attempts _attempts;
+        private readonly LetterGuesser _letterGuesser;
 
-        private Word _word;
         private bool _isDiffuicultyChosen = false;
         private bool _isWordGenerated = false;
-        private int _attemptsCount;
         private int _guessedWordsCount;
+
         public Game()
         {
             _gameUI = new GameUI();
-            _gameUI.SetStartSettingDificultyUIElementActive(true);
-
             _difficulty = new Difficulty();
+
+            _wordBank = new WordBank(Config.WordLenghtByDifficulty);
+            _lettersBank = new LettersBank();
+            _attempts = new Attempts();
+            _letterGuesser = new LetterGuesser();
+
+            InitializeEvents();
+
+            _difficulty.Reset();
+        }
+        private void InitializeEvents()
+        {
             Input.EnterPressed += HandleInput;
 
-            _wordBank = new WordBank(_difficulty.WordSettings);
-            _lettersBank = new LettersBank();
+            _difficulty.DufficultyChanged += _gameUI.HandleDifficultyChange;
+            _difficulty.DufficultyChangeFailed += _gameUI.HandleDifficultyChangeFail;
+
+            _attempts.AttemptsCountChanged += _gameUI.HandleAttemptsCountChange;
+
+            _lettersBank.GuessedLettersChanged += _gameUI.HandleGuessedLettersChage;
+            _lettersBank.FailedLettersChanged += _gameUI.HandleFailedLettersChage;
+
+            _letterGuesser.MaskChanged += _gameUI.HandleMaskChange;
         }
         private void HandleInput(string input)
         {
@@ -32,27 +50,29 @@
 
             if (_isDiffuicultyChosen && !_isWordGenerated)
             {
-                _isWordGenerated = _wordBank.TryGenerateWordByDifficulty(_difficulty.CurrentValue!.Value, out _word);
-
-                if (_isWordGenerated)
-                {
-                    _gameUI.PrintMask(true, _word.GetMask(_lettersBank.GuessedLetters));
-                    _gameUI.PrintGuessedLetters(true, string.Concat(_lettersBank.GuessedLetters));
-                    _gameUI.PrintFailedLetters(true, string.Concat(_lettersBank.FailedLetters));
-                }
+                TryGenerateWord();
                 return;
             }
 
-            if (_isWordGenerated)
-                if (TryGuessWordLetter(input))
-                {
-                    if (_attemptsCount <= 0)
-                    {
-                        _gameUI.PrintLoseMessage(true);
-                    }
-                    _guessedWordsCount++;
-                    _gameUI.PrintGuessedWordsCount(true, _guessedWordsCount);
-                }
+            if (!_isWordGenerated)
+                return;
+
+            TryGuessWordLetter(input);
+
+            if (_letterGuesser.IsWordGuessed(_lettersBank.GuessedLetters))
+            {
+                _guessedWordsCount++;
+                _gameUI.PrintGuessedWordsCount(true, _guessedWordsCount);
+
+                _difficulty.Reset();
+                _attempts.Reset();
+                _lettersBank.Reset();
+                _letterGuesser.Reset();
+            }
+            else
+            {
+                _gameUI.PrintGuessedWordsCount(false, _guessedWordsCount);
+            }
         }
         private void ChooseDifficulty(string input)
         {
@@ -61,44 +81,31 @@
 
             if (_difficulty.TrySetDifficulty(input))
             {
-                _attemptsCount = _difficulty.AttemptSettings[_difficulty.CurrentValue!.Value];
-
                 _isDiffuicultyChosen = true;
-
-                _gameUI.SetStartSettingDificultyUIElementActive(false);
-                _gameUI.PrintDifficulty(true, _difficulty.CurrentValue!.Value.ToString());
-                _gameUI.ShowFailSettingDificultyUIElement(false);
-                _gameUI.SetLeftAttemptsUIElementState(true, _attemptsCount);
+                _attempts.Count = Config.AttemptsCountByDifficulty[_difficulty.CurrentValue!.Value];
             }
-            else
-            {
-
-                _gameUI.ShowFailSettingDificultyUIElement(true, input);
-                _gameUI.SetStartSettingDificultyUIElementActive(true);
-                _gameUI.PrintDifficulty(false);
-                _gameUI.SetLeftAttemptsUIElementState(false, 0);
-            }
+        }
+        private void TryGenerateWord()
+        {
+            _isWordGenerated = _wordBank.TryGenerateWordByDifficulty(_difficulty.CurrentValue!.Value, out var word);
+            _letterGuesser.Word = word;
         }
         private bool TryGuessWordLetter(string input)
         {
             var letter = input[0];
-            if (_word.Contains(letter))
+            if (_letterGuesser.TryGuessLetter(letter, _lettersBank.GuessedLetters))
             {
                 _lettersBank.AddGuessedLetter(letter);
-                _gameUI.PrintGuessedLetters(true, string.Concat(_lettersBank.GuessedLetters));
+                return true;
             }
             else
             {
-                _attemptsCount--;
                 _lettersBank.AddFailedLetter(letter);
-                _gameUI.PrintFailedLetters(true, string.Concat(_lettersBank.FailedLetters));
-                _gameUI.SetLeftAttemptsUIElementState(true, _attemptsCount);
             }
 
-            var mask = _word.GetMask(_lettersBank.GuessedLetters);
-            _gameUI.PrintMask(true, mask);
+            _attempts.Count--;
 
-            return !mask.Contains('*');
+            return false;
         }
     }
 }

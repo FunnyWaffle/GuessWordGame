@@ -2,8 +2,8 @@
 {
     public static class UI
     {
-        private static readonly Dictionary<int, int> _lastFrameSymbolsCountByLanes = new();
-        private static readonly Dictionary<int, int> _thisFrameSymbolsCountByLanes = new();
+        private static readonly Dictionary<int, int> _lastFrameSymbolsCountByLines = new();
+        private static readonly Dictionary<int, int> _thisFrameSymbolsCountByLines = new();
         private readonly static List<UIElement> _uIElements = new();
 
         public static void HideCursor()
@@ -32,7 +32,7 @@
                     foreach (var line in splitLines)
                     {
                         ReplaceLine(lines, line);
-                        _thisFrameSymbolsCountByLanes[lines] = line.Length;
+                        _thisFrameSymbolsCountByLines[lines] = line.Length;
                         lines++;
                     }
                 }
@@ -44,7 +44,7 @@
 
             if (TryGetInput(out var input))
             {
-                _thisFrameSymbolsCountByLanes[lines] = input.Length;
+                _thisFrameSymbolsCountByLines[lines] = input.Length;
                 Console.WriteLine(input);
             }
 
@@ -52,7 +52,7 @@
         }
         private static void ReplaceLine(int lineNumber, string line)
         {
-            if (!_lastFrameSymbolsCountByLanes.TryGetValue(lineNumber, out var lastFrameSymbolsCount))
+            if (!_lastFrameSymbolsCountByLines.TryGetValue(lineNumber, out var lastFrameSymbolsCount))
             {
                 Console.WriteLine(line);
                 return;
@@ -67,7 +67,7 @@
         }
         private static void ClearRestLines(int startLineNumber)
         {
-            foreach (var (line, symbolsCount) in _lastFrameSymbolsCountByLanes)
+            foreach (var (line, symbolsCount) in _lastFrameSymbolsCountByLines)
             {
                 if (line < startLineNumber)
                     continue;
@@ -85,14 +85,12 @@
         }
         private static void CopyThisFrameSymbolsIntoLastFrame()
         {
-            _lastFrameSymbolsCountByLanes.Clear();
-            foreach (var (lane, symbolsCount) in _thisFrameSymbolsCountByLanes)
+            _lastFrameSymbolsCountByLines.Clear();
+            foreach (var (lane, symbolsCount) in _thisFrameSymbolsCountByLines)
             {
-                _lastFrameSymbolsCountByLanes[lane] = symbolsCount;
+                _lastFrameSymbolsCountByLines[lane] = symbolsCount;
             }
-            _thisFrameSymbolsCountByLanes.Clear();
+            _thisFrameSymbolsCountByLines.Clear();
         }
-
-        
     }
 }

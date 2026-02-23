@@ -10,7 +10,6 @@
             while (true)
             {
                 Input.ReadInput();
-                game.Update();
                 UI.UpdateUI();
             }
         }
