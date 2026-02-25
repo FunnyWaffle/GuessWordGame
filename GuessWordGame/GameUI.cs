@@ -2,6 +2,8 @@
 {
     public class GameUI
     {
+        private readonly List<Text> _playedGamesStatisticsUI = new();
+
         private readonly Text _startSettingDificultyUIElement = UI.CreateText("Choose diffuculty: \n" +
                      "1 - Easy\n" +
                      "2 - Medium\n" +
@@ -14,7 +16,9 @@
         private readonly Text _guessedLettersUI = UI.CreateText("Guessed letters: {0}");
         private readonly Text _failedLettersUI = UI.CreateText("Failed letters: {0}");
         private readonly Text _loseMessageUI = UI.CreateText("You lost, because you spend all attempts.");
-        private readonly Text _guessedWordsCountUI = UI.CreateText("Guessed words count: {0}");
+        private readonly Text _guessedWordsCountUI = UI.CreateText("Guessed words in a raw count: {0}");
+        private readonly Text _statisticsTitleUI = UI.CreateText("Statistics:");
+
         public void HandleDifficultyChange(DifficultyType? difficulty)
         {
             if (difficulty.HasValue)
@@ -24,6 +28,8 @@
                 _failedLettersUI.IsActive = false;
                 _startSettingDificultyUIElement.IsActive = false;
                 _failSettingDificultyUIElement.IsActive = false;
+                _guessedWordsCountUI.IsActive = false;
+                DisablePlayedGamesStatistics();
             }
             else
             {
@@ -93,6 +99,35 @@
         {
             _guessedWordsCountUI.IsActive = isActive;
             _guessedWordsCountUI.Setparameters(value);
+        }
+        public void PrintPlayedGamesStatistics(IReadOnlyDictionary<DifficultyType, int> playedGamesCountByDifficulty)
+        {
+            _statisticsTitleUI.IsActive = true;
+            foreach (var (difficulty, count) in playedGamesCountByDifficulty)
+            {
+                if (!TryGetFreeStatisticsUI(out var statisticsUI))
+                {
+                    statisticsUI = UI.CreateText("You played {0} games on {1} difficulty.");
+                }
+
+                statisticsUI.IsActive = true;
+                statisticsUI.Setparameters(count, difficulty);
+
+                _playedGamesStatisticsUI.Add(statisticsUI);
+            }
+        }
+        public void DisablePlayedGamesStatistics()
+        {
+            _statisticsTitleUI.IsActive = false;
+            foreach (var statisticUI in _playedGamesStatisticsUI)
+            {
+                statisticUI.IsActive = false;
+            }
+        }
+        private bool TryGetFreeStatisticsUI(out Text foundFreeStatisticsUI)
+        {
+            foundFreeStatisticsUI = _playedGamesStatisticsUI.FirstOrDefault(statisticsUI => !statisticsUI.IsActive);
+            return foundFreeStatisticsUI != null;
         }
     }
 }

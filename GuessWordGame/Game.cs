@@ -8,6 +8,7 @@
         private readonly LettersBank _lettersBank;
         private readonly Attempts _attempts;
         private readonly LetterGuesser _letterGuesser;
+        private readonly Statistics _statistics;
 
         private bool _isDiffuicultyChosen = false;
         private bool _isWordGenerated = false;
@@ -22,6 +23,7 @@
             _lettersBank = new LettersBank();
             _attempts = new Attempts();
             _letterGuesser = new LetterGuesser();
+            _statistics = new Statistics();
 
             InitializeEvents();
 
@@ -64,15 +66,17 @@
                 _guessedWordsCount++;
                 _gameUI.PrintGuessedWordsCount(true, _guessedWordsCount);
 
-                _difficulty.Reset();
-                _attempts.Reset();
-                _lettersBank.Reset();
-                _letterGuesser.Reset();
-                Reset();
+                Restart();
+                return;
             }
             else
             {
                 _gameUI.PrintGuessedWordsCount(false, _guessedWordsCount);
+            }
+
+            if (_attempts.Count <= 0)
+            {
+                Restart();
             }
         }
         private void ChooseDifficulty(string input)
@@ -107,6 +111,17 @@
             _attempts.Count--;
 
             return false;
+        }
+        private void Restart()
+        {
+            _statistics.SetPlayedGame(_difficulty.CurrentValue!.Value);
+            _gameUI.PrintPlayedGamesStatistics(_statistics.PlayedGamesCountByDifficulty);
+
+            _difficulty.Reset();
+            _attempts.Reset();
+            _lettersBank.Reset();
+            _letterGuesser.Reset();
+            Reset();
         }
         private void Reset()
         {
