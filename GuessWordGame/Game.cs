@@ -66,7 +66,7 @@
                 _guessedWordsCount++;
                 _gameUI.PrintGuessedWordsCount(true, _guessedWordsCount);
 
-                Restart();
+                Restart(true);
                 return;
             }
             else
@@ -76,7 +76,7 @@
 
             if (_attempts.Count <= 0)
             {
-                Restart();
+                Restart(false);
             }
         }
         private void ChooseDifficulty(string input)
@@ -112,10 +112,10 @@
 
             return false;
         }
-        private void Restart()
+        private void Restart(bool isWin)
         {
-            _statistics.SetPlayedGame(_difficulty.CurrentValue!.Value);
-            _gameUI.PrintPlayedGamesStatistics(_statistics.PlayedGamesCountByDifficulty);
+            _statistics.SetPlayedGame(_difficulty.CurrentValue!.Value, isWin);
+            _gameUI.PrintPlayedGamesStatistics(_statistics.PlayedGameStatisticsByDifficulty);
 
             _difficulty.Reset();
             _attempts.Reset();

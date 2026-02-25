@@ -17,7 +17,7 @@
         private readonly Text _failedLettersUI = UI.CreateText("Failed letters: {0}");
         private readonly Text _loseMessageUI = UI.CreateText("You lost, because you spend all attempts.");
         private readonly Text _guessedWordsCountUI = UI.CreateText("Guessed words in a raw count: {0}");
-        private readonly Text _statisticsTitleUI = UI.CreateText("Statistics:");
+        private readonly Text _statisticsTitleUI = UI.CreateText(" \nStatistics:");
 
         public void HandleDifficultyChange(DifficultyType? difficulty)
         {
@@ -100,18 +100,19 @@
             _guessedWordsCountUI.IsActive = isActive;
             _guessedWordsCountUI.Setparameters(value);
         }
-        public void PrintPlayedGamesStatistics(IReadOnlyDictionary<DifficultyType, int> playedGamesCountByDifficulty)
+        public void PrintPlayedGamesStatistics(
+            IReadOnlyDictionary<DifficultyType, (int Wins, int Loses, float WinPercent)> playedGamesCountByDifficulty)
         {
             _statisticsTitleUI.IsActive = true;
-            foreach (var (difficulty, count) in playedGamesCountByDifficulty)
+            foreach (var (difficulty, statistic) in playedGamesCountByDifficulty)
             {
                 if (!TryGetFreeStatisticsUI(out var statisticsUI))
                 {
-                    statisticsUI = UI.CreateText("You played {0} games on {1} difficulty.");
+                    statisticsUI = UI.CreateText("{0} difficulty: wins {1}, loses {2}, win rate {3}");
                 }
 
                 statisticsUI.IsActive = true;
-                statisticsUI.Setparameters(count, difficulty);
+                statisticsUI.Setparameters(difficulty, statistic.Wins, statistic.Loses, statistic.WinPercent * 100);
 
                 _playedGamesStatisticsUI.Add(statisticsUI);
             }
