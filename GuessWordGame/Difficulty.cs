@@ -2,36 +2,40 @@
 {
     public class Difficulty
     {
-        private readonly Dictionary<DifficultyType, (int MinLeght, int MaxLenght)> _wordSettings = new()
-        {
-            [DifficultyType.Easy] = (0, 5),
-            [DifficultyType.Medium] = (4, 6),
-            [DifficultyType.Hard] = (5, int.MaxValue),
-        };
-        private readonly Dictionary<DifficultyType, int> _attemptSettings = new()
-        {
-            [DifficultyType.Easy] = 10,
-            [DifficultyType.Medium] = 9,
-            [DifficultyType.Hard] = 8,
-        };
+        private DifficultyType? _currentValue;
 
-        public IReadOnlyDictionary<DifficultyType, (int MinLeght, int MaxLenght)> WordSettings => _wordSettings;
-        public IReadOnlyDictionary<DifficultyType, int> AttemptSettings => _attemptSettings;
-        public DifficultyType? CurrentValue { get; private set; }
+        public DifficultyType? CurrentValue
+        {
+            get => _currentValue;
+            private set
+            {
+                DufficultyChanged?.Invoke(value);
+                _currentValue = value;
+            }
+        }
 
+        public event Action<DifficultyType?> DufficultyChanged;
+        public event Action<string> DufficultyChangeFailed;
+
+        public void Reset()
+        {
+            CurrentValue = null;
+        }
         public bool TrySetDifficulty(string type)
         {
             bool wasSetted;
 
-            if (!TryGetDifficultyTypeByIndex(type, out var difficultyType)
-                && !TryGetDifficultyTypeEnumValue(type, out difficultyType))
-            {
-                wasSetted = false;
-            }
-            else
+            if (TryGetDifficultyTypeByIndex(type, out var difficultyType)
+                || TryGetDifficultyTypeEnumValue(type, out difficultyType))
             {
                 CurrentValue = difficultyType;
                 wasSetted = true;
+            }
+            else
+            {
+                CurrentValue = null;
+                wasSetted = false;
+                DufficultyChangeFailed?.Invoke(type);
             }
 
             return wasSetted;

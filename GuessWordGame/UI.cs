@@ -2,48 +2,94 @@
 {
     public static class UI
     {
-        public static void PrintMessage(string message)
+        private static readonly Dictionary<int, int> _lastFrameSymbolsCountByLines = new();
+        private static readonly Dictionary<int, int> _thisFrameSymbolsCountByLines = new();
+        private readonly static List<UIElement> _uIElements = new();
+
+        public static void HideCursor()
         {
-            Console.WriteLine(message);
+            Console.CursorVisible = false;
         }
-        public static void PrintChoiceDifficulty()
+        public static Text CreateText(string text)
         {
-            Console.WriteLine("Choose diffuculty: \n" +
-                    "1 - Easy\n" +
-                    "2 - Medium\n" +
-                    "3 - Hard");
+            var uIText = new Text(text);
+            _uIElements.Add(uIText);
+            return uIText;
         }
-        public static void PrintDifficulty(DifficultyType value)
+        public static void UpdateUI()
         {
-            Console.WriteLine($"\nDifficult is {value}");
+            Console.SetCursorPosition(0, 0);
+
+            var lines = 0;
+            foreach (var element in _uIElements)
+            {
+                if (!element.IsActive)
+                    continue;
+
+                if (element is Text text)
+                {
+                    var splitLines = text.Value.Split('\n');
+                    foreach (var line in splitLines)
+                    {
+                        ReplaceLine(lines, line);
+                        _thisFrameSymbolsCountByLines[lines] = line.Length;
+                        lines++;
+                    }
+                }
+            }
+
+            ClearRestLines(lines);
+
+            Console.SetCursorPosition(0, lines);
+
+            if (TryGetInput(out var input))
+            {
+                _thisFrameSymbolsCountByLines[lines] = input.Length;
+                Console.WriteLine(input);
+            }
+
+            CopyThisFrameSymbolsIntoLastFrame();
         }
-        public static void PrintGuessedLetters(IEnumerable<char> letters)
+        private static void ReplaceLine(int lineNumber, string line)
         {
-            Console.WriteLine("Guessed letters: " + string.Concat(letters));
+            if (!_lastFrameSymbolsCountByLines.TryGetValue(lineNumber, out var lastFrameSymbolsCount))
+            {
+                Console.WriteLine(line);
+                return;
+            }
+
+            var extraSymbols = lastFrameSymbolsCount - line.Length;
+            if (extraSymbols > 0)
+                line += new string(' ', extraSymbols);
+
+            Console.WriteLine(line);
         }
-        public static void PrintFailedLetters(IEnumerable<char> letters)
+        private static void ClearRestLines(int startLineNumber)
         {
-            Console.WriteLine("Failed letters: " + string.Concat(letters));
+            foreach (var (line, symbolsCount) in _lastFrameSymbolsCountByLines)
+            {
+                if (line < startLineNumber)
+                    continue;
+
+                Console.SetCursorPosition(0, line);
+                Console.WriteLine(new string(' ', symbolsCount));
+            }
         }
-        public static void PrintMask(string mask)
+        private static bool TryGetInput(out string input)
         {
-            Console.WriteLine($"Word {mask}.");
+            input = Input.Value;
+            if (input == string.Empty)
+                return false;
+            return true;
         }
-        public static void PrintSettingDifficultyFailedMessage(string difficultyType)
+        private static void CopyThisFrameSymbolsIntoLastFrame()
         {
-            Console.WriteLine($"Input value {difficultyType} is not any Difficult Type. Please, enter new currect value.");
-        }
-        public static void PrintLoseMessage()
-        {
-            Console.WriteLine("You lost, because you spend all attempts.");
-        }
-        public static void PrintLeftAttempts(int value)
-        {
-            Console.WriteLine($"You have {value} attempts.");
-        }
-        public static void PrintGuessedWordsCount(int value)
-        {
-            Console.WriteLine($"Guessed words count: {value}");
+            _lastFrameSymbolsCountByLines.Clear();
+            foreach (var (lane, symbolsCount) in _thisFrameSymbolsCountByLines)
+            {
+                _lastFrameSymbolsCountByLines[lane] = symbolsCount;
+            }
+            _thisFrameSymbolsCountByLines.Clear();
         }
     }
 }
