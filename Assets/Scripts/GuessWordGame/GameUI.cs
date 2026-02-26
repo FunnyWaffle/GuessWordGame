@@ -1,4 +1,8 @@
-﻿namespace GuessWordGame
+﻿using GuessWordGame;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Assets.Scripts.GuessWordGame
 {
     public class GameUI
     {

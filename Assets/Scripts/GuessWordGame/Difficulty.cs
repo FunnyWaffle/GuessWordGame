@@ -1,4 +1,7 @@
-﻿namespace GuessWordGame
+﻿using GuessWordGame;
+using System;
+
+namespace Assets.Scripts.GuessWordGame
 {
     public class Difficulty
     {
@@ -61,7 +64,7 @@
         private bool TryGetDifficultyTypeEnumValue(string type, out DifficultyType? difficultyType)
         {
             var wasParsed = Enum.TryParse(type, true, out DifficultyType parsedDifficultyType)
-                && Enum.IsDefined(parsedDifficultyType);
+                && Enum.IsDefined(typeof(DifficultyType), parsedDifficultyType);
 
             if (wasParsed)
                 difficultyType = parsedDifficultyType;

@@ -1,4 +1,7 @@
-﻿namespace GuessWordGame
+﻿using GuessWordGame;
+using System.Collections.Generic;
+
+namespace Assets.Scripts.GuessWordGame
 {
     public static class Config
     {

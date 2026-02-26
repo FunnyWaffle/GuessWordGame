@@ -1,4 +1,8 @@
-﻿namespace GuessWordGame
+﻿using Assets.Scripts.GuessWordGame;
+using System;
+using System.Collections.Generic;
+
+namespace GuessWordGame
 {
     public class WordBank
     {

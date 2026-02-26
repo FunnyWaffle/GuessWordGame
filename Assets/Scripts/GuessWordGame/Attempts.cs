@@ -1,4 +1,6 @@
-﻿namespace GuessWordGame
+﻿using System;
+
+namespace Assets.Scripts.GuessWordGame
 {
     public class Attempts
     {

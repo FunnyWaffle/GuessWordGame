@@ -1,4 +1,8 @@
-﻿namespace GuessWordGame
+﻿using GuessWordGame;
+using System;
+using System.Collections.Generic;
+
+namespace Assets.Scripts.GuessWordGame
 {
     public static class UI
     {

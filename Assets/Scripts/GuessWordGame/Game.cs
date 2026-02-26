@@ -1,4 +1,6 @@
-﻿namespace GuessWordGame
+﻿using Assets.Scripts.GuessWordGame;
+
+namespace GuessWordGame
 {
     public class Game
     {
