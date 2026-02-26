@@ -1,0 +1,147 @@
+{
+    "version": 1,
+    "name": "NewInput",
+    "maps": [
+        {
+            "name": "Car",
+            "id": "bc03265b-06c7-4bba-bfd1-450fed83dc67",
+            "actions": [
+                {
+                    "name": "Torque",
+                    "type": "Value",
+                    "id": "17b80b94-04bf-4a50-aada-e9f670723338",
+                    "expectedControlType": "Axis",
+                    "processors": "Clamp(min=-1,max=1)",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Steering",
+                    "type": "Value",
+                    "id": "d603ac93-616c-458c-88bd-5395b7a538bb",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Brake",
+                    "type": "Button",
+                    "id": "b27222b1-7c0f-4311-a2a1-4f4d6321e0ba",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "1D Axis",
+                    "id": "48567e6e-0da5-46ad-841e-afe90fad243c",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Torque",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "10a05d63-df6b-44ac-88f2-206433341bbc",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Torque",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "93080eff-c3e8-4ba4-ac53-a09c14afed8f",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Torque",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "114ee737-e4e6-4a3b-8cf1-757a40952f61",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Steering",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "2f233f4f-e53b-4a1c-85bc-81255431b2d9",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Steering",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "dae3ae58-5ab6-4614-acb3-706199b84b03",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Steering",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "40897ab7-a984-4af2-8a88-951722479b0c",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Brake",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Camera",
+            "id": "db7d74c2-7b33-4d5c-95a7-cfdf26d857ee",
+            "actions": [
+                {
+                    "name": "Rotation",
+                    "type": "Value",
+                    "id": "ac59ac8d-c8a0-4bdb-a0aa-c757a3c4ff68",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "eb472ca7-3640-4bf6-8d49-474a96b35cfe",
+                    "path": "<Pointer>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
