@@ -9,9 +9,11 @@ namespace Assets.Scripts.GuessWordGame.UI
         [SerializeField] private Button _restartButton;
         [SerializeField] private Button _statisticsActiveButton;
         [SerializeField] private Button _exitButton;
+        [SerializeField] private Button _settingsButton;
         public UIPlayButton PlayButton => _playButton;
         public Button StatisticsActiveButton => _statisticsActiveButton;
         public Button RestartButton => _restartButton;
+        public Button SettingsButton => _settingsButton;
 
         private void OnEnable()
         {

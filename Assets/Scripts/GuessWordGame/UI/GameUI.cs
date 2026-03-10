@@ -10,6 +10,7 @@ namespace Assets.Scripts.GuessWordGame.UI
         [SerializeField] private StatisticsMenu _statisticsMenu;
         [SerializeField] private MainMenu _mainMenu;
         [SerializeField] private Button _mainMenuShowButton;
+        [SerializeField] private SettingsMenu _settingsMenu;
 
         private MonoBehaviour _lastClosedWindow;
 
@@ -20,6 +21,7 @@ namespace Assets.Scripts.GuessWordGame.UI
         private void Start()
         {
             _statisticsMenu.SetActive(false);
+            _settingsMenu.SetActive(false);
             _gameplayMenu.SetActive(false);
             _startMenu.SetActive(false);
             ShowMainMenu();
@@ -31,9 +33,10 @@ namespace Assets.Scripts.GuessWordGame.UI
         {
             _mainMenuShowButton.onClick.AddListener(ShowMainMenu);
 
-            _mainMenu.PlayButton.ButtonClicked += HandlePlayButtonPress;
+            _mainMenu.PlayButton.ButtonClicked += HandlePlayButtonClick;
             _mainMenu.StatisticsActiveButton.onClick.AddListener(HandleStatisticsButtonClick);
             _mainMenu.RestartButton.onClick.AddListener(HandleGameEnd);
+            _mainMenu.SettingsButton.onClick.AddListener(HandleSettingsButtonClick);
 
             foreach (var button in _startMenu.UIDifficultySelectionButtons)
             {
@@ -44,8 +47,9 @@ namespace Assets.Scripts.GuessWordGame.UI
         {
             _mainMenuShowButton.onClick.RemoveListener(ShowMainMenu);
 
-            _mainMenu.PlayButton.ButtonClicked -= HandlePlayButtonPress;
+            _mainMenu.PlayButton.ButtonClicked -= HandlePlayButtonClick;
             _mainMenu.RestartButton.onClick.RemoveListener(HandleGameEnd);
+            _mainMenu.SettingsButton.onClick.AddListener(HandleSettingsButtonClick);
 
             foreach (var button in _startMenu.UIDifficultySelectionButtons)
             {
@@ -85,6 +89,7 @@ namespace Assets.Scripts.GuessWordGame.UI
         {
             SetLastClosedWindow();
             _statisticsMenu.SetActive(false);
+            _settingsMenu.SetActive(false);
             _gameplayMenu.SetActive(false);
             _startMenu.SetActive(false);
             _mainMenu.SetActive(true);
@@ -106,10 +111,19 @@ namespace Assets.Scripts.GuessWordGame.UI
                 _lastClosedWindow = _gameplayMenu;
             }
         }
-        private void HandlePlayButtonPress()
+        private void HandlePlayButtonClick()
         {
             OpenLastCloseWindow();
             HideMainMenu();
+        }
+        private void HandleSettingsButtonClick()
+        {
+            HideMainMenu();
+            ShowSettingsMenu();
+        }
+        private void ShowSettingsMenu()
+        {
+            _settingsMenu.SetActive(true);
         }
         private void OpenLastCloseWindow()
         {
