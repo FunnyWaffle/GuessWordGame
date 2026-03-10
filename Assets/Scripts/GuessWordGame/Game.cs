@@ -1,134 +1,170 @@
-﻿using Assets.Scripts.GuessWordGame;
+﻿using System;
+using System.Linq;
+using UnityEngine.InputSystem;
 
-namespace GuessWordGame
+namespace Assets.Scripts.GuessWordGame
 {
     public class Game
     {
-        private readonly GameUI _gameUI;
-        private readonly Difficulty _difficulty;
-        private readonly WordBank _wordBank;
-        private readonly LettersBank _lettersBank;
-        private readonly Attempts _attempts;
-        private readonly LetterGuesser _letterGuesser;
-        private readonly Statistics _statistics;
+        private readonly WordGenerator _wordGenerator;
 
-        private bool _isDiffuicultyChosen = false;
-        private bool _isWordGenerated = false;
+        private Difficulty? _difficulty;
+        private Word _word;
+
+        private int _attemptsCount;
         private int _guessedWordsCount;
+        private int _maxLifeCount;
+        private int _currentLifeCount;
 
         public Game()
         {
-            _gameUI = new GameUI();
-            _difficulty = new Difficulty();
+            _wordGenerator = new WordGenerator();
+            LettersBank = new LettersBank();
+            Statistics = new Statistics();
 
-            _wordBank = new WordBank(Config.WordLenghtByDifficulty);
-            _lettersBank = new LettersBank();
-            _attempts = new Attempts();
-            _letterGuesser = new LetterGuesser();
-            _statistics = new Statistics();
-
-            InitializeEvents();
-
-            _difficulty.Reset();
+            Keyboard.current.onTextInput += HandleInput;
         }
-        private void InitializeEvents()
+        public LettersBank LettersBank { get; }
+        public Statistics Statistics { get; }
+        private int MaxLifeCount
         {
-            Input.EnterPressed += HandleInput;
-
-            _difficulty.DufficultyChanged += _gameUI.HandleDifficultyChange;
-            _difficulty.DufficultyChangeFailed += _gameUI.HandleDifficultyChangeFail;
-
-            _attempts.AttemptsCountChanged += _gameUI.HandleAttemptsCountChange;
-
-            _lettersBank.GuessedLettersChanged += _gameUI.HandleGuessedLettersChage;
-            _lettersBank.FailedLettersChanged += _gameUI.HandleFailedLettersChage;
-
-            _letterGuesser.MaskChanged += _gameUI.HandleMaskChange;
+            get => _maxLifeCount;
+            set
+            {
+                _maxLifeCount = value;
+                MaxLifeCountChanged?.Invoke(_maxLifeCount);
+            }
         }
-        private void HandleInput(string input)
+        private int CurrentLifeCount
         {
-            if (!_isDiffuicultyChosen)
+            get => _currentLifeCount;
+            set
             {
-                ChooseDifficulty(input);
+                _currentLifeCount = value;
+                CurrentLifeCountChanged?.Invoke(_currentLifeCount);
             }
-
-            if (_isDiffuicultyChosen && !_isWordGenerated)
+        }
+        private int AttemptsCount
+        {
+            get => _attemptsCount;
+            set
             {
-                TryGenerateWord();
-                return;
+                _attemptsCount = value;
+                AttemptsCountChanged?.Invoke(_attemptsCount);
             }
-
-            if (!_isWordGenerated)
-                return;
-
-            TryGuessWordLetter(input);
-
-            if (_letterGuesser.IsWordGuessed(_lettersBank.GuessedLetters))
+        }
+        private int GuessedWordsCount
+        {
+            get => _guessedWordsCount;
+            set
             {
-                _guessedWordsCount++;
-                _gameUI.PrintGuessedWordsCount(true, _guessedWordsCount);
+                _guessedWordsCount = value;
+                GuessedWordsCountChanged?.Invoke(_guessedWordsCount);
+            }
+        }
 
-                Restart(true);
+
+        public event Action GameStarted;
+        public event Action<string> WordMaskChanged;
+        public event Action<int> AttemptsCountChanged;
+        public event Action<int> GuessedWordsCountChanged;
+        public event Action<int> MaxLifeCountChanged;
+        public event Action<int> CurrentLifeCountChanged;
+        public event Action WordGenerated;
+        public event Action GameEnded;
+        public void HandleInput(char input)
+        {
+            if (!_difficulty.HasValue)
                 return;
+
+            if (!char.IsLetter(input))
+                return;
+
+            var mask = GuessWordLetter(input);
+
+            var isWin = !mask.Contains('*');
+            var isLost = AttemptsCount <= 0;
+            var isGameOver = isWin || isLost;
+
+            if (!isGameOver)
+                return;
+
+            Statistics.SetPlayedGame(_difficulty.Value, isWin);
+
+            var config = Config.DifficultyConfigs[_difficulty.Value];
+            GenerateNextWord(config);
+
+            if (isWin)
+            {
+                GuessedWordsCount++;
             }
             else
             {
-                _gameUI.PrintGuessedWordsCount(false, _guessedWordsCount);
+                CurrentLifeCount--;
             }
 
-            if (_attempts.Count <= 0)
+            if (CurrentLifeCount <= 0)
             {
-                Restart(false);
+                GameEnded?.Invoke();
             }
         }
-        private void ChooseDifficulty(string input)
+        public void ChooseDifficulty(string input)
         {
-            if (input == string.Empty)
+            if (string.IsNullOrEmpty(input))
                 return;
 
-            if (_difficulty.TrySetDifficulty(input))
-            {
-                _isDiffuicultyChosen = true;
-                _attempts.Count = Config.AttemptsCountByDifficulty[_difficulty.CurrentValue!.Value];
-            }
-        }
-        private void TryGenerateWord()
-        {
-            _isWordGenerated = _wordBank.TryGenerateWordByDifficulty(_difficulty.CurrentValue!.Value, out var word);
-            _letterGuesser.Word = word;
-        }
-        private bool TryGuessWordLetter(string input)
-        {
-            var letter = input[0];
-            if (_letterGuesser.TryGuessLetter(letter, _lettersBank.GuessedLetters))
-            {
-                _lettersBank.AddGuessedLetter(letter);
-                return true;
-            }
-            else
-            {
-                _lettersBank.AddFailedLetter(letter);
-            }
+            if (!DifficultyParser.TryParse(input, out var difficulty))
+                return;
 
-            _attempts.Count--;
+            _difficulty = difficulty;
 
-            return false;
+            var config = Config.DifficultyConfigs[_difficulty.Value];
+            GenerateNextWord(config);
+
+            MaxLifeCount = config.LifeCount;
+            CurrentLifeCount = config.LifeCount;
+
+            GameStarted?.Invoke();
         }
-        private void Restart(bool isWin)
+        public void RestartGame()
         {
-            _statistics.SetPlayedGame(_difficulty.CurrentValue!.Value, isWin);
-            _gameUI.PrintPlayedGamesStatistics(_statistics.PlayedGameStatisticsByDifficulty);
-
-            _difficulty.Reset();
-            _attempts.Reset();
-            _lettersBank.Reset();
-            _letterGuesser.Reset();
             Reset();
+            GameEnded?.Invoke();
+        }
+        private string GuessWordLetter(char letter)
+        {
+            if (_word.Contains(letter))
+            {
+                LettersBank.AddGuessedLetter(letter);
+            }
+            else if (!LettersBank.FailedLetters.Contains(letter))
+            {
+                LettersBank.AddFailedLetter(letter);
+                AttemptsCount--;
+            }
+
+            var mask = _word.GetMask(LettersBank.GuessedLetters);
+            WordMaskChanged?.Invoke(mask);
+            return mask;
+        }
+        private void GenerateNextWord(DifficultyConfig config)
+        {
+            LettersBank.Reset();
+
+            while (!_wordGenerator.TryGenerateWordByLenght(config.MinWordLenght, config.MaxWordLenght, out _word))
+            {
+            }
+
+            AttemptsCount = config.GuessLetterAttemtsCount;
+
+            WordGenerated?.Invoke();
+            WordMaskChanged?.Invoke(_word.GetMask(LettersBank.GuessedLetters));
         }
         private void Reset()
         {
-            _isDiffuicultyChosen = false;
-            _isWordGenerated = false;
+            _word = null;
+            _difficulty = null;
+            GuessedWordsCount = 0;
         }
     }
 }

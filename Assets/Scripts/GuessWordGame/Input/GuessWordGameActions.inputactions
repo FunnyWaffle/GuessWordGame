@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "GuessWordGameActions",
+    "maps": [
+        {
+            "name": "KeyboardInput",
+            "id": "068b61be-2808-46eb-a0a3-d783e2afbfc8",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "50c6feed-2e2f-4855-9da5-34cb3a2c3c64",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4e37be4f-5483-4509-8225-2ae256c4ae12",
+                    "path": "<Keyboard>/anyKey",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
