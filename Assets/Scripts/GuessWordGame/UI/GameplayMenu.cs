@@ -90,7 +90,6 @@ namespace Assets.Scripts.GuessWordGame.UI
             {
                 foreach (var button in LetterButtons)
                 {
-
                     if (!button.IsUsed &&
                         button.IsTextContainsThisLetter(letter))
                     {
