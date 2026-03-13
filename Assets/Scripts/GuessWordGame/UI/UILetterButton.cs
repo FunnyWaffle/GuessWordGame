@@ -19,9 +19,11 @@ namespace Assets.Scripts.GuessWordGame.UI
         private Color _failedColor = Color.red;
 
         private bool _selected = false;
+
         public bool IsUsed { get; private set; } = false;
 
         public event Action<char> ButtonClicked;
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (IsUsed)
@@ -30,6 +32,7 @@ namespace Assets.Scripts.GuessWordGame.UI
             if (!_selected)
                 _image.color = _mouseOverColor;
         }
+
         public void OnPointerExit(PointerEventData eventData)
         {
             if (IsUsed)
@@ -38,6 +41,7 @@ namespace Assets.Scripts.GuessWordGame.UI
             if (!_selected)
                 _image.color = _defaultColor;
         }
+
         public void Initialize(GameObject gameObject)
         {
             _button = gameObject.GetComponent<Button>();
@@ -48,17 +52,20 @@ namespace Assets.Scripts.GuessWordGame.UI
             var buttonClickEvent = _button.onClick;
             buttonClickEvent.AddListener(HandleButtonClickEvent);
         }
+
         public void SetText(char value)
         {
             var stringValue = value.ToString();
             _text.text = stringValue;
             gameObject.name = stringValue;
         }
+
         public bool IsTextContainsThisLetter(char letter)
         {
             return _text.text[0] == char.ToUpper(letter) ||
                 _text.text[0] == char.ToLower(letter);
         }
+
         public void SetGuessedState(bool isGuessed)
         {
             if (isGuessed)
@@ -72,12 +79,14 @@ namespace Assets.Scripts.GuessWordGame.UI
                 IsUsed = true;
             }
         }
+
         public void ResetState()
         {
             _selected = false;
             IsUsed = false;
             _image.color = _defaultColor;
         }
+
         private void HandleButtonClickEvent()
         {
             var text = _text.text;

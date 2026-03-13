@@ -10,6 +10,7 @@ namespace Assets.Scripts.GuessWordGame.UI
         [SerializeField] private List<UIDifficultySelectionButton> _difficultySelectionButtons;
 
         public IReadOnlyList<UIDifficultySelectionButton> UIDifficultySelectionButtons => _difficultySelectionButtons;
+
         public void SubscribeDifficultySelectionEvent(Game game)
         {
             foreach (var button in _difficultySelectionButtons)
@@ -17,6 +18,7 @@ namespace Assets.Scripts.GuessWordGame.UI
                 button.ButtonClicked += game.ChooseDifficulty;
             }
         }
+
         public void SetActive(bool isActive)
         {
             gameObject.SetActive(isActive);

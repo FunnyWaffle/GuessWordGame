@@ -7,6 +7,7 @@ namespace Assets.Scripts.GuessWordGame
         private readonly Dictionary<int, List<Word>> _wordsByLenght = new();
 
         private int _maxWordLenght;
+
         public WordGenerator()
         {
             var allWords = new List<string>() { "Home", "Kid", "Boy", "Girl", "Gal", "Ship", "Robber", "Mariner", "Leviathan",
@@ -14,6 +15,7 @@ namespace Assets.Scripts.GuessWordGame
 
             SortWordsByDifficulty(allWords);
         }
+
         private void SortWordsByDifficulty(List<string> words)
         {
             foreach (var word in words)
@@ -21,6 +23,7 @@ namespace Assets.Scripts.GuessWordGame
                 AddWordToBank(word);
             }
         }
+
         private void AddWordToBank(string wordValue)
         {
             var wordLenght = wordValue.Length;
@@ -49,6 +52,7 @@ namespace Assets.Scripts.GuessWordGame
 
             return true;
         }
+
         private bool TryGetWords(int minWordLenght, int maxWordLenght, out List<Word> words)
         {
             var iterationsCount = maxWordLenght - minWordLenght;
