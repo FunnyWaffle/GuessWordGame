@@ -24,6 +24,7 @@ namespace Assets.Scripts.GuessWordGame
 
             Keyboard.current.onTextInput += HandleInput;
         }
+
         public LettersBank LettersBank { get; }
         public Statistics Statistics { get; }
         private int MaxLifeCount
@@ -72,6 +73,7 @@ namespace Assets.Scripts.GuessWordGame
         public event Action<int> CurrentLifeCountChanged;
         public event Action WordGenerated;
         public event Action GameEnded;
+
         public void HandleInput(char input)
         {
             if (!_difficulty.HasValue)
@@ -108,6 +110,7 @@ namespace Assets.Scripts.GuessWordGame
                 GameEnded?.Invoke();
             }
         }
+
         public void ChooseDifficulty(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -126,11 +129,13 @@ namespace Assets.Scripts.GuessWordGame
 
             GameStarted?.Invoke();
         }
+
         public void RestartGame()
         {
             Reset();
             GameEnded?.Invoke();
         }
+
         private string GuessWordLetter(char letter)
         {
             if (_word.Contains(letter))
@@ -147,6 +152,7 @@ namespace Assets.Scripts.GuessWordGame
             WordMaskChanged?.Invoke(mask);
             return mask;
         }
+
         private void GenerateNextWord(DifficultyConfig config)
         {
             LettersBank.Reset();
@@ -160,6 +166,7 @@ namespace Assets.Scripts.GuessWordGame
             WordGenerated?.Invoke();
             WordMaskChanged?.Invoke(_word.GetMask(LettersBank.GuessedLetters));
         }
+
         private void Reset()
         {
             _word = null;

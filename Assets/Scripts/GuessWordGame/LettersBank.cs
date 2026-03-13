@@ -13,11 +13,13 @@ namespace Assets.Scripts.GuessWordGame
 
         public event Action<IEnumerable<char>> GuessedLettersChanged;
         public event Action<IEnumerable<char>> FailedLettersChanged;
+
         public void AddGuessedLetter(char letter)
         {
             _guessedLetters.Add(letter);
             GuessedLettersChanged?.Invoke(_guessedLetters);
         }
+
         public void AddFailedLetter(char letter)
         {
             _failedLetters.Add(letter);

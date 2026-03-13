@@ -6,6 +6,7 @@ namespace Assets.Scripts.GuessWordGame
     public class EntryPoint : MonoBehaviour
     {
         [SerializeField] private GameUI _gameUI;
+
         private void Start()
         {
             var game = new Game();
