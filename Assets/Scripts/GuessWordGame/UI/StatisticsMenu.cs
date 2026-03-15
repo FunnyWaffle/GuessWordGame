@@ -7,12 +7,16 @@ namespace Assets.Scripts.GuessWordGame.UI
     public class StatisticsMenu : MonoBehaviour
     {
         private readonly Dictionary<Difficulty, DifficultyStatisticsUI> _difficultyStatistics = new();
+
         [SerializeField] private Transform _difficultyStatisticsGrid;
+
         public bool IsActive => gameObject.activeSelf;
+
         public void Initialize()
         {
             CreateStatisticsUIElements();
         }
+
         public void HandleDifficultyStatisticsChange(Difficulty difficultyType, DifficultyStatistics difficultyStatistics)
         {
             var statistics = _difficultyStatistics[difficultyType];
@@ -20,10 +24,12 @@ namespace Assets.Scripts.GuessWordGame.UI
                 difficultyStatistics.LosesCount,
                 difficultyStatistics.WinRate);
         }
+
         public void SetActive(bool active)
         {
             gameObject.SetActive(active);
         }
+
         private void CreateStatisticsUIElements()
         {
             var difficulties = Config.DifficultyConfigs;

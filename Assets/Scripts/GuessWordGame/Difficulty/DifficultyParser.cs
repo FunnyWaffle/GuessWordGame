@@ -9,6 +9,7 @@ namespace Assets.Scripts.GuessWordGame
             return TryGetDifficultyByIndex(type[0], out difficultyType)
                || TryGetDifficultyEnumValue(type, out difficultyType);
         }
+
         private static bool TryGetDifficultyByIndex(char index, out Difficulty difficultyType)
         {
             difficultyType = Difficulty.None;
@@ -29,6 +30,7 @@ namespace Assets.Scripts.GuessWordGame
 
             return true;
         }
+
         private static bool TryGetDifficultyEnumValue(string type, out Difficulty difficultyType)
         {
             return Enum.TryParse(type, true, out difficultyType)

@@ -7,11 +7,14 @@ namespace Assets.Scripts.GuessWordGame
     {
         private readonly Dictionary<Difficulty, DifficultyStatistics> _playedGameStatisticsByDifficulty
             = new();
+
         public Statistics()
         {
             CreateStatistics();
         }
+
         public event Action<Difficulty, DifficultyStatistics> DifficultyStatisticsChanged;
+
         private void CreateStatistics()
         {
             var difficulties = Config.DifficultyConfigs;
@@ -20,6 +23,7 @@ namespace Assets.Scripts.GuessWordGame
                 _playedGameStatisticsByDifficulty[difficulty] = new DifficultyStatistics();
             }
         }
+
         public void SetPlayedGame(Difficulty difficultyType, bool isWin)
         {
             var statistics = _playedGameStatisticsByDifficulty[difficultyType];

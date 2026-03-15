@@ -10,6 +10,7 @@ namespace Assets.Scripts.GuessWordGame.UI
         [SerializeField] private Button _statisticsActiveButton;
         [SerializeField] private Button _exitButton;
         [SerializeField] private Button _settingsButton;
+
         public UIPlayButton PlayButton => _playButton;
         public Button StatisticsActiveButton => _statisticsActiveButton;
         public Button RestartButton => _restartButton;
@@ -19,28 +20,34 @@ namespace Assets.Scripts.GuessWordGame.UI
         {
             _exitButton.onClick.AddListener(HandleExit);
         }
+
         private void OnDisable()
         {
             _exitButton.onClick.RemoveListener(HandleExit);
         }
+
         public void Initialize()
         {
             _restartButton.gameObject.SetActive(false);
         }
+
         public void ShowRestartButton()
         {
             _restartButton.gameObject.SetActive(true);
             _restartButton.transform.SetSiblingIndex(1);
         }
+
         public void HideRestartButton()
         {
             _restartButton.gameObject.SetActive(false);
             _restartButton.transform.SetAsLastSibling();
         }
+
         public void SetActive(bool isActive)
         {
             gameObject.SetActive(isActive);
         }
+
         private void HandleExit()
         {
 #if UNITY_EDITOR

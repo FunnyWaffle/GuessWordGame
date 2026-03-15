@@ -7,14 +7,17 @@ namespace Assets.Scripts.GuessWordGame
     public class Word
     {
         private readonly string _value;
+
         public Word(string value)
         {
             _value = value;
         }
+
         public bool Contains(char letter)
         {
             return _value.Contains(letter, StringComparison.OrdinalIgnoreCase);
         }
+
         public string GetMask(IEnumerable<char> usedLetters)
         {
             var mask = string.Empty;

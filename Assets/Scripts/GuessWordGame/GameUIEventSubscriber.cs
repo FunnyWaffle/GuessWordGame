@@ -27,6 +27,7 @@ namespace Assets.Scripts.GuessWordGame
 
             _ = SubscribeLetterButtonsClickEvent(game, gameUI);
         }
+
         private async Task SubscribeLetterButtonsClickEvent(Game game, GameUI gameUI)
         {
             await gameUI.GameplayMenu.ButtonsInitializeTask;

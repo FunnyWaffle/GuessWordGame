@@ -13,6 +13,7 @@ namespace Assets.Scripts.GuessWordGame
             [Difficulty.Hard] = new DifficultyConfig(minWordLenght: 5, maxWordLenght: int.MaxValue, guessLetterAttemtsCount: 8,
                 lifeCount: 5),
         };
+
         public static IReadOnlyDictionary<Difficulty, DifficultyConfig> DifficultyConfigs => _difficultyConfigs;
     }
 }
