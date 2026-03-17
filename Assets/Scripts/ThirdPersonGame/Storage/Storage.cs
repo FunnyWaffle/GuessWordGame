@@ -39,14 +39,14 @@ namespace Assets.Scripts.ThirdPersonGame
             }
         }
 
-        public static async Task Save<T>(T saveData, string filePath)
+        public static async Task Save<T>(T saveData, string filePath, JsonSerializerSettings settings = null)
         {
             await _semaphore.WaitAsync();
 
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-                var json = JsonConvert.SerializeObject(saveData);
+                var json = JsonConvert.SerializeObject(saveData, settings);
                 File.WriteAllText(filePath, json);
             }
             finally

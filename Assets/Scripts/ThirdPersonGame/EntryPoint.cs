@@ -1,3 +1,4 @@
+using Assets.Scripts.ThirdPersonGame.UI;
 using UnityEngine;
 
 namespace Assets.Scripts.ThirdPersonGame
@@ -6,7 +7,7 @@ namespace Assets.Scripts.ThirdPersonGame
     {
         private void Start()
         {
-            
+            var uICreator = new UICreator();
         }
 
     }
