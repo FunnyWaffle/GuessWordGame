@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.ThirdPersonGame.UI
+namespace Assets.Scripts.ThirdPersonGame.View.UI
 {
     public class MainMenu : MonoBehaviour
     {
@@ -10,17 +10,12 @@ namespace Assets.Scripts.ThirdPersonGame.UI
 
         public Action PlayButtonClicked;
 
-        private void OnEnable()
-        {
+        private void OnEnable() =>
             _playbutton.onClick.AddListener(HandlePlayButtonClick);
-        }
 
-        private void OnDisable()
-        {
+        private void OnDisable() =>
             _playbutton.onClick.RemoveListener(HandlePlayButtonClick);
-        }
 
-        private void Start() => UIMenuManager.CreateMainMenuController(this);
 
         private void HandlePlayButtonClick() => PlayButtonClicked?.Invoke();
 
