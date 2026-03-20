@@ -37,7 +37,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         private async void HandleSceneLoad()
         {
-            var playerView = await _spawner.SpawnAsync<PlayerView>("Player");
+            var playerView = await _spawner.SpawnAsync<PlayerView>("Armature");
 
             await _spawner.SpawnAsync("Camera With Cinemachine Brain");
             var cinemachineCamera = await _spawner.SpawnAsync<CinemachineCamera>("FreeLook Cinemachine");

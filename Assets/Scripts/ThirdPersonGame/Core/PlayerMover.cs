@@ -9,6 +9,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private readonly Vector3 _playerRigOffset;
 
         private readonly CharacterController _characterController;
+        private readonly Animator _animator;
         private readonly Input _input;
 
         private readonly float _jumpForce;
@@ -16,18 +17,19 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         private readonly float _movementAcceleration;
         private readonly float _movementDeceleration;
-        private readonly Vector2 _maxHorizontalVelocity;
-        private Vector2 _currentHorizontalVelocity;
+        private readonly Vector3 _maxMovementVelocity;
+        private Vector3 _currentMovementVelocity;
 
         public PlayerMover(PlayerView playerView, Input input)
         {
             _characterController = playerView.CharacterController;
+            _animator = playerView.Animator;
             _playerRig = playerView.transform;
             _playerRigOffset = _characterController.transform.position - _playerRig.position;
 
             _input = input;
 
-            _maxHorizontalVelocity = new Vector2(playerView.HorizontalVelocity, playerView.HorizontalVelocity);
+            _maxMovementVelocity = new Vector3(playerView.HorizontalVelocity, 0f, playerView.HorizontalVelocity);
             _jumpForce = playerView.JumpForce;
             _movementAcceleration = playerView.HorizontalAcceleration;
             _movementDeceleration = playerView.HorizontalDeceleration;
@@ -40,6 +42,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             Move();
             Jump();
             SynchronizeRigTransform();
+            EnableAnimations();
         }
 
         private void UpdateHorizontalVelocity()
@@ -48,10 +51,10 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             var direction = input.x * _playerRig.right +
                   input.y * _playerRig.forward;
 
-            var targetVelocity = new Vector2(_maxHorizontalVelocity.x * direction.x, _maxHorizontalVelocity.y * direction.z);
+            var targetVelocity = Vector3.Scale(direction, _maxMovementVelocity);
             float currentAcceleration = GetAcceleration(input);
 
-            _currentHorizontalVelocity = Vector2.MoveTowards(_currentHorizontalVelocity, targetVelocity,
+            _currentMovementVelocity = Vector3.MoveTowards(_currentMovementVelocity, targetVelocity,
                 currentAcceleration * Time.deltaTime);
         }
 
@@ -91,7 +94,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         }
 
         private void Move() =>
-            _characterController.Move(new Vector3(_currentHorizontalVelocity.x, 0f, _currentHorizontalVelocity.y) * Time.deltaTime);
+            _characterController.Move(_currentMovementVelocity * Time.deltaTime);
 
         private void Jump() =>
             _characterController.Move(_currentVerticalVelocity * Time.deltaTime * _playerRig.up);
@@ -100,6 +103,12 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         {
             _playerRig.SetPositionAndRotation(_characterController.transform.position - _playerRigOffset,
                 _characterController.transform.rotation);
+        }
+
+        private void EnableAnimations()
+        {
+            var localVelocity = _playerRig.InverseTransformDirection(_currentMovementVelocity);
+            _animator.SetFloat("ForwardSpeed", localVelocity.z / _maxMovementVelocity.z);
         }
     }
 }

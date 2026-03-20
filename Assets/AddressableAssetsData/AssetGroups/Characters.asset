@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Characters
   m_GUID: 54e7e2e8cca5dba4d9c170cacf978def
   m_SerializeEntries:
+  - m_GUID: 09a8703fd8a66d54bb5777901936040a
+    m_Address: Armature
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 650d4ee312688f74a8e288fe85e3aa09
     m_Address: Player
     m_ReadOnly: 0
