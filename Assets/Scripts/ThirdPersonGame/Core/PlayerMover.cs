@@ -11,35 +11,95 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private readonly CharacterController _characterController;
         private readonly Input _input;
 
-        private readonly float _velocity;
+        private readonly float _jumpForce;
+        private float _currentVerticalVelocity;
 
-        public PlayerMover(PlayerView playerView, Input input, float velocity)
+        private readonly float _movementAcceleration;
+        private readonly float _movementDeceleration;
+        private readonly Vector2 _maxHorizontalVelocity;
+        private Vector2 _currentHorizontalVelocity;
+
+        public PlayerMover(PlayerView playerView, Input input)
         {
             _characterController = playerView.CharacterController;
             _playerRig = playerView.transform;
             _playerRigOffset = _characterController.transform.position - _playerRig.position;
 
             _input = input;
-            _velocity = velocity;
+
+            _maxHorizontalVelocity = new Vector2(playerView.HorizontalVelocity, playerView.HorizontalVelocity);
+            _jumpForce = playerView.JumpForce;
+            _movementAcceleration = playerView.HorizontalAcceleration;
+            _movementDeceleration = playerView.HorizontalDeceleration;
         }
 
         public void Update()
         {
-            var input = _input.MovementInput;
-
-            var displacement = _velocity * Time.deltaTime;
-
-            var forwardDisplacement = displacement * input.y * _playerRig.forward;
-            var sideDisplacement = displacement * input.x * _playerRig.right;
-            _characterController.Move(sideDisplacement + forwardDisplacement);
-
+            UpdateHorizontalVelocity();
+            UpdateVerticalVelocity();
+            Move();
+            Jump();
             SynchronizeRigTransform();
         }
 
+        private void UpdateHorizontalVelocity()
+        {
+            var input = _input.MovementInput;
+            var direction = input.x * _playerRig.right +
+                  input.y * _playerRig.forward;
+
+            var targetVelocity = new Vector2(_maxHorizontalVelocity.x * direction.x, _maxHorizontalVelocity.y * direction.z);
+            float currentAcceleration = GetAcceleration(input);
+
+            _currentHorizontalVelocity = Vector2.MoveTowards(_currentHorizontalVelocity, targetVelocity,
+                currentAcceleration * Time.deltaTime);
+        }
+
+        private float GetAcceleration(Vector2 input)
+        {
+            float currentAcceleration;
+            if (input != Vector2.zero)
+            {
+                currentAcceleration = _characterController.isGrounded
+                    ? _movementAcceleration
+                    : _movementAcceleration * 0.9f;
+            }
+            else
+            {
+                currentAcceleration = _characterController.isGrounded
+               ? _movementDeceleration
+               : _movementDeceleration * 0.9f;
+            }
+
+            return currentAcceleration;
+        }
+
+        private void UpdateVerticalVelocity()
+        {
+            if (_characterController.isGrounded)
+            {
+                if (_currentVerticalVelocity > 0)
+                    _currentVerticalVelocity = 0f;
+
+                if (_input.IsJumpPressed)
+                    _currentVerticalVelocity = _jumpForce;
+            }
+            else
+            {
+                _currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
+            }
+        }
+
+        private void Move() =>
+            _characterController.Move(new Vector3(_currentHorizontalVelocity.x, 0f, _currentHorizontalVelocity.y) * Time.deltaTime);
+
+        private void Jump() =>
+            _characterController.Move(_currentVerticalVelocity * Time.deltaTime * _playerRig.up);
+
         private void SynchronizeRigTransform()
         {
-            _playerRig.position = _characterController.transform.position - _playerRigOffset;
-            _playerRig.rotation = _characterController.transform.rotation;
+            _playerRig.SetPositionAndRotation(_characterController.transform.position - _playerRigOffset,
+                _characterController.transform.rotation);
         }
     }
 }

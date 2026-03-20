@@ -226,7 +226,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.ThirdPersonGame.View.PlayerView
   _characterController: {fileID: 4289352374463424686}
-  _velocity: 10
+  _horizontalVelocity: 10
+  _horizontalAcceleration: 33
+  _horizontalDeceleration: 66
+  _jumpForce: 5
 --- !u!1 &8331108788385613172
 GameObject:
   m_ObjectHideFlags: 0

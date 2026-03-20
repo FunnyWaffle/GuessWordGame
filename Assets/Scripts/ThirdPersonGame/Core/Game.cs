@@ -44,8 +44,8 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             cinemachineCamera.Target.TrackingTarget = playerView.CharacterController.transform;
 
             _input = new Input();
-            _playerMover = new PlayerMover(playerView, _input, playerView.Velocity);
-            _playerRotator = new PlayerRotator(playerView.transform, cinemachineCamera.transform);
+            _playerMover = new PlayerMover(playerView, _input);
+            _playerRotator = new PlayerRotator(playerView.CharacterController.transform, cinemachineCamera.transform);
         }
 
         private void CreateLevelSelectionButtonts()
