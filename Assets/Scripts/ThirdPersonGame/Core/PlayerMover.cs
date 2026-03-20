@@ -109,6 +109,11 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         {
             var localVelocity = _playerRig.InverseTransformDirection(_currentMovementVelocity);
             _animator.SetFloat("ForwardSpeed", localVelocity.z / _maxMovementVelocity.z);
+
+            if (_input.IsJumpPressed)
+                _animator.SetTrigger("IsJumpReleased");
+
+            _animator.SetBool("Grounded", _characterController.isGrounded);
         }
     }
 }
