@@ -10,7 +10,7 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
         public void CreateControllers(Game game, UIRoot uIRoot, UIMenusSwitcher uIMenusSwitcher)
         {
             var levelSelectionMenuController = CreateLevelSelectionMenuController(game, uIRoot.LevelSelectionMenu);
-            var mainMenuController = CreateMainMenuController(uIRoot.MainMenu);
+            var mainMenuController = CreateMainMenuController(uIRoot.MainMenu, uIMenusSwitcher);
 
             uIMenusSwitcher.SetControllers(mainMenuController, levelSelectionMenuController);
         }
@@ -18,7 +18,7 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
         private LevelSelectionMenuController CreateLevelSelectionMenuController(Game game, LevelSelectionMenu levelSelectionMenu) =>
            new(game, levelSelectionMenu);
 
-        private MainMenuController CreateMainMenuController(MainMenu mainMenu) =>
-           new(mainMenu);
+        private MainMenuController CreateMainMenuController(MainMenu mainMenu, UIMenusSwitcher uIMenusSwitcher) =>
+           new(mainMenu, uIMenusSwitcher);
     }
 }

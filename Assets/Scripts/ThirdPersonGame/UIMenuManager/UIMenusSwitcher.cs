@@ -12,6 +12,8 @@ namespace Assets.Scripts.ThirdPersonGame
         {
             _mainMenuController = mainMenuController;
             _levelSelectionController = levelSelectionController;
+
+            OpenMainMenu();
         }
 
         public void OpenMainMenu()
