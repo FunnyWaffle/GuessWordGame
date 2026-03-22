@@ -19,13 +19,14 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             _uIRoot = uIRoot;
 
             CreateControllers();
+
+            _game.PlayerSpawned += CreatePlayerController;
+            _game.CoinsSpawnAreaSpawned += HadleCoinsSpawnAreaSpawnEvent;
         }
 
         public void CreateControllers()
         {
-            var levelSelectionMenuController = CreateLevelSelectionMenuController(_uIRoot.LevelSelectionMenu);
-
-            _game.PlayerSpawned += CreatePlayerController;
+            CreateLevelSelectionMenuController(_uIRoot.LevelSelectionMenu);
         }
 
         private LevelSelectionMenuController CreateLevelSelectionMenuController(LevelSelectionMenu levelSelectionMenu) =>
@@ -49,6 +50,13 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             var playerRotator = _game.CreatePlayerRotator(playerView.CharacterController.transform, camera.transform);
 
             new PlayerController(playerView, playerMover, playerRotator);
+        }
+
+        private void HadleCoinsSpawnAreaSpawnEvent(GameObject areaObject)
+        {
+            var areaView = areaObject.GetComponent<CoinsSpawnAreaView>();
+            var area = _game.CreateCoinsSpawnArea(areaView.BoxCollider);
+            new CoinsSpawnAreaController(area, areaView);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private PlayerMover _playerMover;
         private PlayerRotator _playerRotator;
         private Input _input;
-
+        private CoinsSpawnArea _coinsSpawnArea;
         private readonly List<LevelSelectionButton> _levelSelectionButtons = new();
 
         public Game()
@@ -26,6 +26,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         public IEnumerable<LevelSelectionButton> LevelSelectionButtons => _levelSelectionButtons;
 
         public event Action<GameObject, GameObject> PlayerSpawned;
+        public event Action<GameObject> CoinsSpawnAreaSpawned;
 
         public void Update()
         {
@@ -33,6 +34,8 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             _playerMover?.Move(movementInput.Value);
             _playerMover?.Jump(_input.IsJumpPressed);
             _playerRotator?.Update();
+
+            _coinsSpawnArea?.Update();
         }
 
         public PlayerMover CreatePlayerMover(CharacterController characterController,
@@ -61,16 +64,22 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             return _playerRotator;
         }
 
+        public CoinsSpawnArea CreateCoinsSpawnArea(BoxCollider areaCollider)
+        {
+            _coinsSpawnArea = new CoinsSpawnArea(areaCollider, _spawner);
+            return _coinsSpawnArea;
+        }
+
         private void SubscribeSceneLoadEvent()
         {
             _sceneLoader.SceneLoaded += HandleSceneLoad;
         }
 
-        private async void HandleSceneLoad()
+        private void HandleSceneLoad()
         {
             _input = new Input();
             _ = SpawnPlayerAsync();
-
+            _ = SpawnCoinsSpawnArea();
         }
 
         private async Task SpawnPlayerAsync()
@@ -82,9 +91,10 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             PlayerSpawned?.Invoke(playerView, cinemachineCamera);
         }
 
-        private void SpawnCoins()
+        private async Task SpawnCoinsSpawnArea()
         {
-
+            var area = await _spawner.SpawnAsync("Coins Spawn Area");
+            CoinsSpawnAreaSpawned?.Invoke(area);
         }
 
         private void CreateLevelSelectionButtonts()
