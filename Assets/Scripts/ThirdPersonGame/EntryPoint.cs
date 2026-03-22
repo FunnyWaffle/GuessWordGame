@@ -18,10 +18,7 @@ namespace Assets.Scripts.ThirdPersonGame
 
             _game = new Game();
 
-            var uIMenusSwitcher = new UIMenusSwitcher();
-
-            var controllersBuilder = new ControllersBuilder();
-            controllersBuilder.CreateControllers(_game, _uIRoot, uIMenusSwitcher);
+            new GameController(_game, _uIRoot);
         }
 
         private void Update()

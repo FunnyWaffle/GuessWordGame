@@ -14,6 +14,21 @@ namespace Assets.Scripts.ThirdPersonGame.View.UI
         public void Initialize()
         {
             _levelSelectionMenu.Initialize();
+            OpenMainMenu();
+
+            _mainMenu.PlayButtonClicked += OpenLevelSelectionMenu;
+        }
+
+        public void OpenMainMenu()
+        {
+            _mainMenu.SetActive(true);
+            _levelSelectionMenu.SetActive(false);
+        }
+
+        public void OpenLevelSelectionMenu()
+        {
+            _mainMenu.SetActive(false);
+            _levelSelectionMenu.SetActive(true);
         }
     }
 }

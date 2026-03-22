@@ -6,22 +6,12 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 {
     public class Spawner
     {
-        public async Task SpawnAsync(string prefabName)
+        public async Task<GameObject> SpawnAsync(string prefabName)
         {
             var result = Addressables.LoadAssetAsync<GameObject>(prefabName);
             await result.Task;
 
-            Object.Instantiate(result.Result);
-        }
-
-        public async Task<T> SpawnAsync<T>(string prefabName) where T : MonoBehaviour
-        {
-            var result = Addressables.LoadAssetAsync<GameObject>(prefabName);
-            await result.Task;
-
-            var gameObject = Object.Instantiate(result.Result);
-
-            return gameObject.GetComponent<T>();
+            return Object.Instantiate(result.Result);
         }
     }
 }

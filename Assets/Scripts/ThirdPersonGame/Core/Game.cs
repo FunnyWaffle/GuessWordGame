@@ -1,6 +1,7 @@
-﻿using Assets.Scripts.ThirdPersonGame.View;
+﻿using System;
 using System.Collections.Generic;
-using Unity.Cinemachine;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.ThirdPersonGame.Core
 {
@@ -24,10 +25,40 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         public IEnumerable<LevelSelectionButton> LevelSelectionButtons => _levelSelectionButtons;
 
+        public event Action<GameObject, GameObject> PlayerSpawned;
+
         public void Update()
         {
-            _playerMover?.Update();
+            var movementInput = _input?.MovementInput;
+            _playerMover?.Move(movementInput.Value);
+            _playerMover?.Jump(_input.IsJumpPressed);
             _playerRotator?.Update();
+        }
+
+        public PlayerMover CreatePlayerMover(CharacterController characterController,
+            Animator animator,
+            Transform playerRig,
+            float movementVelocity,
+            float jumpForce,
+            float movementAcceleration,
+            float movementDeceleration)
+        {
+            _playerMover = new PlayerMover(
+                _input,
+                characterController,
+                animator,
+                playerRig,
+                movementVelocity,
+                jumpForce,
+                movementAcceleration,
+                movementDeceleration);
+            return _playerMover;
+        }
+
+        public PlayerRotator CreatePlayerRotator(Transform player, Transform camera)
+        {
+            _playerRotator = new PlayerRotator(player, camera);
+            return _playerRotator;
         }
 
         private void SubscribeSceneLoadEvent()
@@ -37,15 +68,23 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         private async void HandleSceneLoad()
         {
-            var playerView = await _spawner.SpawnAsync<PlayerView>("Armature");
-
-            await _spawner.SpawnAsync("Camera With Cinemachine Brain");
-            var cinemachineCamera = await _spawner.SpawnAsync<CinemachineCamera>("FreeLook Cinemachine");
-            cinemachineCamera.Target.TrackingTarget = playerView.CharacterController.transform;
-
             _input = new Input();
-            _playerMover = new PlayerMover(playerView, _input);
-            _playerRotator = new PlayerRotator(playerView.CharacterController.transform, cinemachineCamera.transform);
+            _ = SpawnPlayerAsync();
+
+        }
+
+        private async Task SpawnPlayerAsync()
+        {
+            var playerView = await _spawner.SpawnAsync("Armature");
+            await _spawner.SpawnAsync("Camera With Cinemachine Brain");
+            var cinemachineCamera = await _spawner.SpawnAsync("FreeLook Cinemachine");
+
+            PlayerSpawned?.Invoke(playerView, cinemachineCamera);
+        }
+
+        private void SpawnCoins()
+        {
+
         }
 
         private void CreateLevelSelectionButtonts()

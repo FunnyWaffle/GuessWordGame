@@ -120,7 +120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.ThirdPersonGame.View.PlayerView
   _characterController: {fileID: 1899189104957319383}
   _animator: {fileID: 895688673023459940}
-  _horizontalVelocity: 10
+  _movementVelocity: 10
   _horizontalAcceleration: 33
   _horizontalDeceleration: 66
   _jumpForce: 5

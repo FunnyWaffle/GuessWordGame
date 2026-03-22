@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.ThirdPersonGame.View;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Scripts.ThirdPersonGame.Core
 {
@@ -13,41 +12,59 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private readonly Input _input;
 
         private readonly float _jumpForce;
-        private float _currentVerticalVelocity;
+        private float _currentJumpForce;
 
         private readonly float _movementAcceleration;
         private readonly float _movementDeceleration;
-        private readonly Vector3 _maxMovementVelocity;
+        private Vector3 _maxMovementVelocity;
         private Vector3 _currentMovementVelocity;
 
-        public PlayerMover(PlayerView playerView, Input input)
+        public PlayerMover(Input input,
+            CharacterController characterController,
+            Animator animator,
+            Transform playerRig,
+            float movementVelocity,
+            float jumpForce,
+            float movementAcceleration,
+            float movementDeceleration)
         {
-            _characterController = playerView.CharacterController;
-            _animator = playerView.Animator;
-            _playerRig = playerView.transform;
-            _playerRigOffset = _characterController.transform.position - _playerRig.position;
-
             _input = input;
 
-            _maxMovementVelocity = new Vector3(playerView.HorizontalVelocity, 0f, playerView.HorizontalVelocity);
-            _jumpForce = playerView.JumpForce;
-            _movementAcceleration = playerView.HorizontalAcceleration;
-            _movementDeceleration = playerView.HorizontalDeceleration;
+            _characterController = characterController;
+            _animator = animator;
+            _playerRig = playerRig;
+            _playerRigOffset = _characterController.transform.position - _playerRig.position;
+
+
+            _maxMovementVelocity = new Vector3(movementVelocity, 0f, movementVelocity);
+            _jumpForce = jumpForce;
+            _movementAcceleration = movementAcceleration;
+            _movementDeceleration = movementDeceleration;
         }
 
-        public void Update()
+        public void SetMovementVelocity(float movementVelocity)
         {
-            UpdateHorizontalVelocity();
-            UpdateVerticalVelocity();
+            _maxMovementVelocity = new Vector3(movementVelocity, 0f, movementVelocity);
+        }
+
+        public void Move(Vector2 input)
+        {
+            UpdateMovementVelocity(input);
             Move();
+            SynchronizeRigTransform();
+            EnableMovementAnimation();
+        }
+
+        public void Jump(bool isJumping)
+        {
+            UpdateJumpVelocity(isJumping);
             Jump();
             SynchronizeRigTransform();
-            EnableAnimations();
+            EnableJumpAnimation(isJumping);
         }
 
-        private void UpdateHorizontalVelocity()
+        private void UpdateMovementVelocity(Vector2 input)
         {
-            var input = _input.MovementInput;
             var direction = input.x * _playerRig.right +
                   input.y * _playerRig.forward;
 
@@ -77,19 +94,19 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             return currentAcceleration;
         }
 
-        private void UpdateVerticalVelocity()
+        private void UpdateJumpVelocity(bool isJumping)
         {
             if (_characterController.isGrounded)
             {
-                if (_currentVerticalVelocity > 0)
-                    _currentVerticalVelocity = 0f;
+                if (_currentJumpForce < 0)
+                    _currentJumpForce = 0f;
 
-                if (_input.IsJumpPressed)
-                    _currentVerticalVelocity = _jumpForce;
+                if (isJumping)
+                    _currentJumpForce = _jumpForce;
             }
             else
             {
-                _currentVerticalVelocity += Physics.gravity.y * Time.deltaTime;
+                _currentJumpForce += Physics.gravity.y * Time.deltaTime;
             }
         }
 
@@ -97,7 +114,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             _characterController.Move(_currentMovementVelocity * Time.deltaTime);
 
         private void Jump() =>
-            _characterController.Move(_currentVerticalVelocity * Time.deltaTime * _playerRig.up);
+            _characterController.Move(_currentJumpForce * Time.deltaTime * _playerRig.up);
 
         private void SynchronizeRigTransform()
         {
@@ -105,12 +122,16 @@ namespace Assets.Scripts.ThirdPersonGame.Core
                 _characterController.transform.rotation);
         }
 
-        private void EnableAnimations()
+        private void EnableMovementAnimation()
         {
             var localVelocity = _playerRig.InverseTransformDirection(_currentMovementVelocity);
             _animator.SetFloat("ForwardSpeed", localVelocity.z / _maxMovementVelocity.z);
 
-            if (_input.IsJumpPressed)
+        }
+
+        private void EnableJumpAnimation(bool isJumping)
+        {
+            if (isJumping)
                 _animator.SetTrigger("IsJumpReleased");
 
             _animator.SetBool("Grounded", _characterController.isGrounded);
