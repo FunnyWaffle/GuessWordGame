@@ -1,9 +1,9 @@
-﻿using Assets.Scripts.ThirdPersonGame.View.UI.LevelSelection;
+﻿using Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint.LevelSelection;
 using UnityEngine;
 
-namespace Assets.Scripts.ThirdPersonGame.View.UI
+namespace Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint
 {
-    public class UIRoot : MonoBehaviour
+    public class EntryPointUIRoot : MonoBehaviour
     {
         [SerializeField] private MainMenu _mainMenu;
         [SerializeField] private LevelSelectionMenu _levelSelectionMenu;

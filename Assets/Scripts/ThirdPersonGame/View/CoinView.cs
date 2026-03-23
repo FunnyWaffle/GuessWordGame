@@ -8,9 +8,9 @@ namespace Assets.Scripts.ThirdPersonGame.View
     {
         [SerializeField] private List<CollisionListener> _collisionListeners;
 
-        public event Action CollisionPerformed;
+        public event Action<Collider> CollisionPerformed;
 
-        private void Start()
+        private void OnEnable()
         {
             foreach (var listener in _collisionListeners)
             {
@@ -18,9 +18,17 @@ namespace Assets.Scripts.ThirdPersonGame.View
             }
         }
 
-        private void HanldeCollision()
+        private void OnDisable()
         {
-            CollisionPerformed?.Invoke();
+            foreach (var listener in _collisionListeners)
+            {
+                listener.CollisionPerformed -= HanldeCollision;
+            }
+        }
+
+        private void HanldeCollision(Collider collider)
+        {
+            CollisionPerformed?.Invoke(collider);
         }
     }
 }

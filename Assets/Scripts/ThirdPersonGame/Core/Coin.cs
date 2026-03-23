@@ -1,9 +1,10 @@
 ﻿using DG.Tweening;
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.ThirdPersonGame.Core
 {
-    public class Coin
+    public class Coin : IReadOnlyCoin
     {
         private readonly Transform _transform;
 
@@ -12,13 +13,16 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             _transform = transform;
         }
 
+        public event EventHandler<Collider> CollisionPerformed;
+
         public void Update()
         {
             Rotate();
         }
 
-        public void CollisionEnter()
+        public void CollisionEnter(Collider collider)
         {
+            CollisionPerformed?.Invoke(this, collider);
             _transform.gameObject.SetActive(false);
         }
 

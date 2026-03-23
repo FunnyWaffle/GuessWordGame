@@ -5,11 +5,11 @@ namespace Assets.Scripts.ThirdPersonGame.View
 {
     public class CollisionListener : MonoBehaviour
     {
-        public event Action CollisionPerformed;
+        public event Action<Collider> CollisionPerformed;
 
         private void OnTriggerEnter(Collider other)
         {
-            CollisionPerformed?.Invoke();
+            CollisionPerformed?.Invoke(other);
         }
     }
 }

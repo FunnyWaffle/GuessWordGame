@@ -9,11 +9,14 @@ namespace Assets.Scripts.ThirdPersonGame.Core
     {
         private readonly SceneLoader _sceneLoader = new();
         private readonly Spawner _spawner = new();
+        private readonly CoinPicker _coinPicker = new();
 
         private PlayerMover _playerMover;
         private PlayerRotator _playerRotator;
         private Input _input;
         private CoinsSpawnArea _coinsSpawnArea;
+        private Inventory _inventory;
+        private Player _player;
         private readonly List<LevelSelectionButton> _levelSelectionButtons = new();
 
         public Game()
@@ -25,16 +28,13 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         public IEnumerable<LevelSelectionButton> LevelSelectionButtons => _levelSelectionButtons;
 
+        public event Action SceneLoaded;
         public event Action<GameObject, GameObject> PlayerSpawned;
         public event Action<GameObject> CoinsSpawnAreaSpawned;
 
         public void Update()
         {
-            var movementInput = _input?.MovementInput;
-            _playerMover?.Move(movementInput.Value);
-            _playerMover?.Jump(_input.IsJumpPressed);
-            _playerRotator?.Update();
-
+            _player?.Update();
             _coinsSpawnArea?.Update();
         }
 
@@ -58,6 +58,13 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             return _playerMover;
         }
 
+        public Player CreatePlayer(PlayerMover playerMover, PlayerRotator playerRotator, Inventory inventory, Collider collider)
+        {
+            _player = new Player(playerMover, playerRotator, inventory, collider, _input);
+            _coinPicker.SetInventoryOwner(_player);
+            return _player;
+        }
+
         public PlayerRotator CreatePlayerRotator(Transform player, Transform camera)
         {
             _playerRotator = new PlayerRotator(player, camera);
@@ -67,7 +74,14 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         public CoinsSpawnArea CreateCoinsSpawnArea(BoxCollider areaCollider)
         {
             _coinsSpawnArea = new CoinsSpawnArea(areaCollider, _spawner);
+            _coinPicker.SetCoinArea(_coinsSpawnArea);
             return _coinsSpawnArea;
+        }
+
+        public Inventory CreateInventory()
+        {
+            _inventory = new Inventory();
+            return _inventory;
         }
 
         private void SubscribeSceneLoadEvent()
@@ -80,6 +94,8 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             _input = new Input();
             _ = SpawnPlayerAsync();
             _ = SpawnCoinsSpawnArea();
+
+            SceneLoaded?.Invoke();
         }
 
         private async Task SpawnPlayerAsync()
@@ -95,6 +111,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         {
             var area = await _spawner.SpawnAsync("Coins Spawn Area");
             CoinsSpawnAreaSpawned?.Invoke(area);
+
         }
 
         private void CreateLevelSelectionButtonts()

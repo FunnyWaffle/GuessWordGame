@@ -1,5 +1,5 @@
 ﻿using Assets.Scripts.ThirdPersonGame.Core;
-using Assets.Scripts.ThirdPersonGame.View.UI.LevelSelection;
+using Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint.LevelSelection;
 using System.Collections.Generic;
 
 namespace Assets.Scripts.ThirdPersonGame.Controllers.LevelSelection

@@ -14,9 +14,9 @@ namespace Assets.Scripts.ThirdPersonGame
         public bool IsSceneExist(int sceneId) =>
             sceneId > 0 && sceneId <= MaxSceneId;
 
-        public void LoadScene(int sceneId)
+        public async void LoadScene(int sceneId)
         {
-            SceneManager.LoadScene(sceneId);
+            await SceneManager.LoadSceneAsync(sceneId);
             OnSceneLoaded();
         }
 

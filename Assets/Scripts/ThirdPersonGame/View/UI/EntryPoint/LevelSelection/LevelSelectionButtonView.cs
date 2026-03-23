@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.UI.Button;
 
-namespace Assets.Scripts.ThirdPersonGame.View.UI.LevelSelection
+namespace Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint.LevelSelection
 {
     [RequireComponent(typeof(Button))]
     public class LevelSelectionButtonView : MonoBehaviour

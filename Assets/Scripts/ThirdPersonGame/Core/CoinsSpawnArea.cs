@@ -22,7 +22,10 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             _spawner = spawner;
         }
 
+        public IReadOnlyList<IReadOnlyCoin> Coins => _coins;
+
         public event Action<Coin, GameObject> CoinSpawned;
+        public event Action<IReadOnlyCoin, Collider> CoinCollisionPerformed;
 
         public void Update()
         {
@@ -56,8 +59,15 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         {
             var coinView = await _spawner.SpawnAsync("Coin", position, _areaTransform);
             var coin = new Coin(coinView.transform);
+            coin.CollisionPerformed += OnCoinCollisionPerform;
+
             _coins.Add(coin);
             CoinSpawned?.Invoke(coin, coinView);
+        }
+
+        private void OnCoinCollisionPerform(object sender, Collider collider)
+        {
+            CoinCollisionPerformed?.Invoke(sender as IReadOnlyCoin, collider);
         }
     }
 }

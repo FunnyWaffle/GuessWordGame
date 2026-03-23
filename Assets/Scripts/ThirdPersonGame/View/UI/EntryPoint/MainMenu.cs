@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.ThirdPersonGame.View.UI
+namespace Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint
 {
     public class MainMenu : MonoBehaviour
     {

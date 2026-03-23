@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Scripts.ThirdPersonGame.View.UI.LevelSelection
+namespace Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint.LevelSelection
 {
     public class LevelSelectionMenu : MonoBehaviour
     {
