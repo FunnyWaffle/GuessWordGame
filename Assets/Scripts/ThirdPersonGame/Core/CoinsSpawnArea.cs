@@ -35,7 +35,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             }
         }
 
-        public async void CreateCoins()
+        public void CreateCoins()
         {
             var bounds = _areaCollider.bounds;
             var boundsMin = bounds.min;

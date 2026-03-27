@@ -4,6 +4,8 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 {
     public class PlayerMover
     {
+        private const float AIR_RESPONSIVENESS = 0.1f;
+
         private readonly Transform _playerRig;
         private readonly Vector3 _playerRigOffset;
 
@@ -42,25 +44,26 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             _movementDeceleration = movementDeceleration;
         }
 
-        public void SetMovementVelocity(float movementVelocity)
+        public void SetMaxMovementVelocity(float maxMovementVelocity)
         {
-            _maxMovementVelocity = new Vector3(movementVelocity, 0f, movementVelocity);
+            _maxMovementVelocity = new Vector3(maxMovementVelocity, 0f, maxMovementVelocity);
         }
 
         public void Move(Vector2 input)
         {
             UpdateMovementVelocity(input);
-            Move();
+            ReleaseMove();
             SynchronizeRigTransform();
             EnableMovementAnimation();
         }
 
         public void Jump(bool isJumping)
         {
-            UpdateJumpVelocity(isJumping);
-            Jump();
+            var isGrounded = IsGrounded();
+            UpdateJumpVelocity(isGrounded, isJumping);
+            ReleaseJump();
             SynchronizeRigTransform();
-            EnableJumpAnimation(isJumping);
+            EnableJumpAnimation(isGrounded, isJumping);
         }
 
         private void UpdateMovementVelocity(Vector2 input)
@@ -78,31 +81,43 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private float GetAcceleration(Vector2 input)
         {
             float currentAcceleration;
-            if (input != Vector2.zero)
+            var isGrounded = IsGrounded();
+            if (input == Vector2.zero)
             {
-                currentAcceleration = _characterController.isGrounded
-                    ? _movementAcceleration
-                    : _movementAcceleration * 0.9f;
+                currentAcceleration = isGrounded
+               ? _movementDeceleration
+               : _movementDeceleration * AIR_RESPONSIVENESS;
             }
             else
             {
-                currentAcceleration = _characterController.isGrounded
-               ? _movementDeceleration
-               : _movementDeceleration * 0.9f;
+                currentAcceleration = isGrounded
+                    ? _movementAcceleration
+                    : _movementAcceleration * AIR_RESPONSIVENESS;
             }
 
             return currentAcceleration;
         }
 
-        private void UpdateJumpVelocity(bool isJumping)
+        private bool IsGrounded()
         {
-            if (_characterController.isGrounded)
+            var isHited = Physics.Raycast(_playerRig.position, Vector3.down,
+                _characterController.skinWidth + float.Epsilon,
+                Layers.GetLayerIndex(LayerName.RaycastIgnore),
+                 QueryTriggerInteraction.Ignore);
+            return isHited;
+        }
+
+        private void UpdateJumpVelocity(bool isGrounded, bool isJumping)
+        {
+            if (isGrounded)
             {
                 if (_currentJumpForce < 0)
                     _currentJumpForce = 0f;
 
                 if (isJumping)
+                {
                     _currentJumpForce = _jumpForce;
+                }
             }
             else
             {
@@ -110,10 +125,10 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             }
         }
 
-        private void Move() =>
+        private void ReleaseMove() =>
             _characterController.Move(_currentMovementVelocity * Time.deltaTime);
 
-        private void Jump() =>
+        private void ReleaseJump() =>
             _characterController.Move(_currentJumpForce * Time.deltaTime * _playerRig.up);
 
         private void SynchronizeRigTransform()
@@ -126,15 +141,15 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         {
             var localVelocity = _playerRig.InverseTransformDirection(_currentMovementVelocity);
             _animator.SetFloat("ForwardSpeed", localVelocity.z / _maxMovementVelocity.z);
-
+            _animator.SetFloat("SideSpeed", localVelocity.x / _maxMovementVelocity.x);
         }
 
-        private void EnableJumpAnimation(bool isJumping)
+        private void EnableJumpAnimation(bool isGrounded, bool isJumping)
         {
             if (isJumping)
                 _animator.SetTrigger("IsJumpReleased");
 
-            _animator.SetBool("Grounded", _characterController.isGrounded);
+            _animator.SetBool("Grounded", isGrounded);
         }
     }
 }

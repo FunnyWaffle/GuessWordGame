@@ -65,9 +65,10 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             return _player;
         }
 
-        public PlayerRotator CreatePlayerRotator(Transform player, Transform camera)
+        public PlayerRotator CreatePlayerRotator(Transform player, Transform camera,
+            Animator animator)
         {
-            _playerRotator = new PlayerRotator(player, camera);
+            _playerRotator = new PlayerRotator(player, camera, animator);
             return _playerRotator;
         }
 
@@ -100,7 +101,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         private async Task SpawnPlayerAsync()
         {
-            var playerView = await _spawner.SpawnAsync("Armature");
+            var playerView = await _spawner.SpawnAsync("Remy");
             await _spawner.SpawnAsync("Camera With Cinemachine Brain");
             var cinemachineCamera = await _spawner.SpawnAsync("FreeLook Cinemachine");
 

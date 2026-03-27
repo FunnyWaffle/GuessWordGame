@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8190186804421631413}
   - component: {fileID: 1532186952956376319}
   - component: {fileID: 5655435483350581716}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Coins Spawn Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}

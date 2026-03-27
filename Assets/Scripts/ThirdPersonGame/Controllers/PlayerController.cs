@@ -15,7 +15,7 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             _playerMover = playerMover;
             _playerRotator = playerRotator;
 
-            _playerView.MovementVelocityChanged += _playerMover.SetMovementVelocity;
+            _playerView.MovementVelocityChanged += _playerMover.SetMaxMovementVelocity;
         }
     }
 }

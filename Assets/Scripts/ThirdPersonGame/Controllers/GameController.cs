@@ -54,7 +54,8 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             var cinechine = camera.GetComponent<CinemachineCamera>();
             cinechine.Target.TrackingTarget = playerView.CharacterController.transform;
 
-            var playerRotator = _game.CreatePlayerRotator(playerView.CharacterController.transform, camera.transform);
+            var playerRotator = _game.CreatePlayerRotator(playerView.CharacterController.transform, camera.transform,
+                playerView.Animator);
 
             new PlayerController(playerView, playerMover, playerRotator);
 
