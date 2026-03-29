@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Camera
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Camera
+  m_GUID: 3536d7afba7cc3e468f5a16f02a69cfb
+  m_SerializeEntries:
+  - m_GUID: 41a7d8d5a08daba43bf70ea4d27d0824
+    m_Address: FreeLook Cinemachine
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 89d4ebcd4431ff74ba93cdc105a9726d
+    m_Address: Camera With Cinemachine Brain
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8bb4853c8c874c458deed79c0243c5f
+    m_Address: Third Person Cinechine
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: df23e23fd56f6f341aac0eca651b7528, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: b484adc4fa6310b43970f6967d8b7205, type: 2}
+    - {fileID: 11400000, guid: e0f2a284cb26dc74b91e4d3465803867, type: 2}
