@@ -72,6 +72,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 3acd7332d0378d143af4721119da4f5b, type: 2}
+    - target: {fileID: 5866666021909216657, guid: ea6280b683d58c14c88e61b8d3c1e281, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -136,3 +140,7 @@ MonoBehaviour:
   _horizontalAcceleration: 33
   _horizontalDeceleration: 66
   _jumpForce: 5
+  _animatorStates:
+    _elements:
+    - _key: 0
+      _value: {fileID: 9100000, guid: 3acd7332d0378d143af4721119da4f5b, type: 2}

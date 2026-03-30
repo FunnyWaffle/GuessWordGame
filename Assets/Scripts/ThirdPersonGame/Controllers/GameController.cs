@@ -42,9 +42,12 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
         private void HandlePlayerSpawnEvent(GameObject player, GameObject camera)
         {
             var playerView = player.GetComponent<PlayerView>();
+
+            var animator = new Core.Animator(playerView.Animator, playerView.AnimatorStates.ToDictionary());
+
             var playerMover = _game.CreatePlayerMover(
                 playerView.CharacterController,
-                playerView.Animator,
+                animator,
                 playerView.transform,
                 playerView.MovementVelocity,
                 playerView.JumpForce,
@@ -55,7 +58,7 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             cinechine.Target.TrackingTarget = playerView.CharacterController.transform;
 
             var playerRotator = _game.CreatePlayerRotator(playerView.CharacterController.transform, camera.transform,
-                playerView.Animator);
+                animator);
 
             new PlayerController(playerView, playerMover, playerRotator);
 

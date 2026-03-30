@@ -32,6 +32,10 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             _playerMover.Move(movementInput);
             _playerMover.Jump(_input.IsJumpPressed);
             _playerRotator.Update();
+
+            var isStartDanceButtonPressed = _input.IsStartDanceButtonPressed;
+
+
         }
 
         public bool IsColliderMatch(Collider collider)

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.ThirdPersonGame.Core.Assets;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.ThirdPersonGame.Core
 {
@@ -50,14 +52,14 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private Vector3 GetRandomPosition(Vector3 boundsMin, Vector3 boundsMax)
         {
             return new Vector3(
-                UnityEngine.Random.Range(boundsMin.x, boundsMax.x),
-                UnityEngine.Random.Range(boundsMin.y, boundsMax.y),
-                UnityEngine.Random.Range(boundsMin.z, boundsMax.z));
+                Random.Range(boundsMin.x, boundsMax.x),
+                Random.Range(boundsMin.y, boundsMax.y),
+                Random.Range(boundsMin.z, boundsMax.z));
         }
 
         private async Task SpawnCoinAsync(Vector3 position)
         {
-            var coinView = await _spawner.SpawnAsync("Coin", position, _areaTransform);
+            var coinView = await _spawner.SpawnAsync(AssetName.Coin, position, _areaTransform);
             var coin = new Coin(coinView.transform);
             coin.CollisionPerformed += OnCoinCollisionPerform;
 

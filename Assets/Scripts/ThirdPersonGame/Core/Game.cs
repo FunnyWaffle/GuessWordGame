@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.ThirdPersonGame.Core.Assets;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -11,11 +12,8 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private readonly Spawner _spawner = new();
         private readonly CoinPicker _coinPicker = new();
 
-        private PlayerMover _playerMover;
-        private PlayerRotator _playerRotator;
         private Input _input;
         private CoinsSpawnArea _coinsSpawnArea;
-        private Inventory _inventory;
         private Player _player;
         private readonly List<LevelSelectionButton> _levelSelectionButtons = new();
 
@@ -46,7 +44,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             float movementAcceleration,
             float movementDeceleration)
         {
-            _playerMover = new PlayerMover(
+            return new PlayerMover(
                 _input,
                 characterController,
                 animator,
@@ -55,7 +53,6 @@ namespace Assets.Scripts.ThirdPersonGame.Core
                 jumpForce,
                 movementAcceleration,
                 movementDeceleration);
-            return _playerMover;
         }
 
         public Player CreatePlayer(PlayerMover playerMover, PlayerRotator playerRotator, Inventory inventory, Collider collider)
@@ -68,8 +65,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         public PlayerRotator CreatePlayerRotator(Transform player, Transform camera,
             Animator animator)
         {
-            _playerRotator = new PlayerRotator(player, camera, animator);
-            return _playerRotator;
+            return new PlayerRotator(player, camera, animator);
         }
 
         public CoinsSpawnArea CreateCoinsSpawnArea(BoxCollider areaCollider)
@@ -81,8 +77,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         public Inventory CreateInventory()
         {
-            _inventory = new Inventory();
-            return _inventory;
+            return new Inventory();
         }
 
         private void SubscribeSceneLoadEvent()
@@ -101,16 +96,16 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         private async Task SpawnPlayerAsync()
         {
-            var playerView = await _spawner.SpawnAsync("Remy");
-            await _spawner.SpawnAsync("Camera With Cinemachine Brain");
-            var cinemachineCamera = await _spawner.SpawnAsync("FreeLook Cinemachine");
+            var playerView = await _spawner.SpawnAsync(AssetName.Remy);
+            await _spawner.SpawnAsync(AssetName.CameraWithCinemachineBrain);
+            var cinemachineCamera = await _spawner.SpawnAsync(AssetName.FreeLookCinemachine);
 
             PlayerSpawned?.Invoke(playerView, cinemachineCamera);
         }
 
         private async Task SpawnCoinsSpawnArea()
         {
-            var area = await _spawner.SpawnAsync("Coins Spawn Area");
+            var area = await _spawner.SpawnAsync(AssetName.CoinsSpawnArea);
             CoinsSpawnAreaSpawned?.Invoke(area);
 
         }

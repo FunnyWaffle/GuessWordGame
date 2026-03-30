@@ -10,5 +10,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         public Vector2 MovementInput => _inputActions.Player.Movement.ReadValue<Vector2>();
         public bool IsJumpPressed => _inputActions.Player.Jump.WasPressedThisFrame();
+        public bool IsStartDanceButtonPressed => _inputActions.Player.StartDance.WasPressedThisFrame();
+
     }
 }

@@ -140,16 +140,16 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private void EnableMovementAnimation()
         {
             var localVelocity = _playerRig.InverseTransformDirection(_currentMovementVelocity);
-            _animator.SetFloat("ForwardSpeed", localVelocity.z / _maxMovementVelocity.z);
-            _animator.SetFloat("SideSpeed", localVelocity.x / _maxMovementVelocity.x);
+            _animator.SetFloat(MovementAnimatorParameters.ForwardSpeed, localVelocity.z / _maxMovementVelocity.z);
+            _animator.SetFloat(MovementAnimatorParameters.SideSpeed, localVelocity.x / _maxMovementVelocity.x);
         }
 
         private void EnableJumpAnimation(bool isGrounded, bool isJumping)
         {
             if (isJumping)
-                _animator.SetTrigger("IsJumpReleased");
+                _animator.SetTrigger(MovementAnimatorParameters.IsJumpReleased);
 
-            _animator.SetBool("Grounded", isGrounded);
+            _animator.SetBool(MovementAnimatorParameters.Grounded, isGrounded);
         }
     }
 }
