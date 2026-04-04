@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEditor.Animations;
+using UnityEngine;
 
 namespace Assets.Scripts.ThirdPersonGame.Core
 {
@@ -8,7 +9,8 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private readonly Dictionary<AnimatorState, AnimatorController> _states;
         private readonly UnityEngine.Animator _animator;
 
-        public Animator(UnityEngine.Animator animator, Dictionary<AnimatorState, AnimatorController> states)
+        public Animator(UnityEngine.Animator animator,
+            Dictionary<AnimatorState, AnimatorController> states)
         {
             _animator = animator;
             _states = states;
@@ -17,10 +19,18 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         public bool TrySetAnimatorState(AnimatorState animatorState)
         {
             if (!_states.TryGetValue(animatorState, out var state))
+            {
+                Debug.Log($"Animator {_animator} has no animation {animatorState}.");
                 return false;
+            }
 
             _animator.runtimeAnimatorController = state;
             return true;
+        }
+
+        public void SetRootMotion(bool isEnable)
+        {
+            _animator.applyRootMotion = isEnable;
         }
 
         public void SetFloat(string parameterName, float value) =>

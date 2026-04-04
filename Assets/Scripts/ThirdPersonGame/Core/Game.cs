@@ -55,9 +55,13 @@ namespace Assets.Scripts.ThirdPersonGame.Core
                 movementDeceleration);
         }
 
-        public Player CreatePlayer(PlayerMover playerMover, PlayerRotator playerRotator, Inventory inventory, Collider collider)
+        public Player CreatePlayer(PlayerMover playerMover,
+            PlayerRotator playerRotator,
+            Inventory inventory,
+            Collider collider,
+            Animator animator)
         {
-            _player = new Player(playerMover, playerRotator, inventory, collider, _input);
+            _player = new Player(playerMover, playerRotator, inventory, collider, _input, animator);
             _coinPicker.SetInventoryOwner(_player);
             return _player;
         }
@@ -107,7 +111,6 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         {
             var area = await _spawner.SpawnAsync(AssetName.CoinsSpawnArea);
             CoinsSpawnAreaSpawned?.Invoke(area);
-
         }
 
         private void CreateLevelSelectionButtonts()

@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.ThirdPersonGame.Controllers.LevelSelection;
+﻿using Assets.Scripts.ThirdPersonGame.Controllers.DanceMinigame;
+using Assets.Scripts.ThirdPersonGame.Controllers.LevelSelection;
 using Assets.Scripts.ThirdPersonGame.Core;
 using Assets.Scripts.ThirdPersonGame.View;
 using Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint;
@@ -39,9 +40,9 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
         private LevelSelectionMenuController CreateLevelSelectionMenuController(LevelSelectionMenu levelSelectionMenu) =>
            new(_game, levelSelectionMenu);
 
-        private void HandlePlayerSpawnEvent(GameObject player, GameObject camera)
+        private void HandlePlayerSpawnEvent(GameObject playerGameObject, GameObject camera)
         {
-            var playerView = player.GetComponent<PlayerView>();
+            var playerView = playerGameObject.GetComponent<PlayerView>();
 
             var animator = new Core.Animator(playerView.Animator, playerView.AnimatorStates.ToDictionary());
 
@@ -65,7 +66,13 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             var inventory = _game.CreateInventory();
             CreateInventoryController(inventory);
 
-            _game.CreatePlayer(playerMover, playerRotator, inventory, playerView.CharacterController);
+            var player = _game.CreatePlayer(playerMover, playerRotator, inventory, playerView.CharacterController, animator);
+            player.BehaviourStateChanged += HandlePlayerBehaviourStateChange;
+            player.DanceStarted += HandlePlayerDanceStart;
+            player.DanceInterrupted += HandlePlayerDanceInterrupt;
+
+            new DanceActionZoneController(player, _levelUIRoot.ActionZones);
+            new DanceScoreController(player.DanceScore, _levelUIRoot.DanceScoreUI);
         }
 
         private void CreateInventoryController(Inventory inventory)
@@ -78,6 +85,21 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             var areaView = areaObject.GetComponent<CoinsSpawnAreaView>();
             var area = _game.CreateCoinsSpawnArea(areaView.BoxCollider);
             new CoinsSpawnAreaController(area, areaView);
+        }
+
+        private void HandlePlayerBehaviourStateChange(CharacterBehaviourState characterBehaviourState)
+        {
+            _levelUIRoot.ChangeStateView.SetState(characterBehaviourState);
+        }
+
+        private void HandlePlayerDanceStart(object sender, System.EventArgs e)
+        {
+            _levelUIRoot.ShowDanceMinigameHUD();
+        }
+
+        private void HandlePlayerDanceInterrupt(object sender, System.EventArgs e)
+        {
+            _levelUIRoot.ShowMainHUD();
         }
     }
 }

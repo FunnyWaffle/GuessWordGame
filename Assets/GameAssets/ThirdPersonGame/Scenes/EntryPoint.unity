@@ -163,6 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c30fe5aa51dcea8469140b3f0906ea64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.ThirdPersonGame.EntryPoint
+  _assetReferences: {fileID: 11400000, guid: c82012b141f131e48a4fc251ed444570, type: 2}
   _uIRoot: {fileID: 1485740138}
 --- !u!1 &312451208
 GameObject:

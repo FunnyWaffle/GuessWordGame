@@ -66,6 +66,15 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             EnableJumpAnimation(isGrounded, isJumping);
         }
 
+        public bool IsGrounded()
+        {
+            var isHited = Physics.Raycast(_playerRig.position, Vector3.down,
+                _characterController.skinWidth + float.Epsilon,
+                Layers.GetLayerIndex(LayerName.RaycastIgnore),
+                 QueryTriggerInteraction.Ignore);
+            return isHited;
+        }
+
         private void UpdateMovementVelocity(Vector2 input)
         {
             var direction = input.x * _playerRig.right +
@@ -96,15 +105,6 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             }
 
             return currentAcceleration;
-        }
-
-        private bool IsGrounded()
-        {
-            var isHited = Physics.Raycast(_playerRig.position, Vector3.down,
-                _characterController.skinWidth + float.Epsilon,
-                Layers.GetLayerIndex(LayerName.RaycastIgnore),
-                 QueryTriggerInteraction.Ignore);
-            return isHited;
         }
 
         private void UpdateJumpVelocity(bool isGrounded, bool isJumping)

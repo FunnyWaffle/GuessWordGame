@@ -23,6 +23,8 @@ namespace Assets.Scripts.ThirdPersonGame
             _game = new Game();
 
             new GameController(_game, _uIRoot);
+
+            CoroutineRunner.SetCoroutineStarter(this);
         }
 
         private void Update()
