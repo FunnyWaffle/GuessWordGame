@@ -12,25 +12,32 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private readonly PlayerRotator _playerRotator;
         private readonly Inventory _inventory;
         private readonly Animator _animator;
+        private readonly VFX _playerVFX;
         private readonly Collider _collider;
+        private readonly AudioSource _audioSource;
+
+        private readonly int _danceActionZoneCount = 2;
 
         private CharacterBehaviourState _behaviourState;
         private int _danceActionZoneIndex;
-        private int _danceActionZoneCount = 2;
 
         public Player(PlayerMover playerMover,
             PlayerRotator playerRotator,
             Inventory inventory,
             Collider collider,
             Input input,
-            Animator animator)
+            Animator animator,
+            VFX playerVFX,
+            AudioSource playerAudioSource)
         {
             _playerMover = playerMover;
             _playerRotator = playerRotator;
             _inventory = inventory;
             _collider = collider;
             _input = input;
+            _playerVFX = playerVFX;
             _animator = animator;
+            _audioSource = playerAudioSource;
 
             _input.ToggleDanceStateActionPerformed += ToggleBehaviourState;
             _input.DanceActionPerformed += HandleDanceActionInput;
@@ -53,12 +60,16 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
         public void Update()
         {
-            if (_behaviourState != CharacterBehaviourState.Default)
-                return;
-
-            _playerMover.Move(_input.MovementInput);
-            _playerMover.Jump(_input.IsJumpPressed);
-            _playerRotator.Update();
+            if (_behaviourState == CharacterBehaviourState.Default)
+            {
+                _playerMover.Move(_input.MovementInput);
+                _playerMover.Jump(_input.IsJumpPressed);
+                _playerRotator.Update();
+            }
+            else
+            {
+                _playerMover.Jump(false);
+            }
         }
 
         public bool IsColliderMatch(Collider collider)
@@ -80,15 +91,27 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             {
                 _behaviourState = CharacterBehaviourState.Dance;
                 _animator.TrySetAnimatorState(AnimatorState.Dance);
+
                 DanceScore.Reset();
-                Dance.Start();
+                var danceClip = DanceMusic.GetRandomClip();
+
+                _audioSource.generator = danceClip;
+                _audioSource.mute = false;
+                _audioSource.Play();
+
+                Dance.Start(danceClip.length);
+
                 DanceStarted?.Invoke(this, new EventArgs());
             }
             else
             {
                 _behaviourState = CharacterBehaviourState.Default;
                 _animator.TrySetAnimatorState(AnimatorState.Default);
+
                 Dance.Stop();
+                _audioSource.mute = true;
+                _audioSource.Stop();
+
                 DanceInterrupted?.Invoke(this, new EventArgs());
             }
 
@@ -133,6 +156,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private void HandleDanceSpecialScoreValue()
         {
             _animator.SetTrigger(DanceAnimatorControllerParameters.SpecialDance);
+            _playerVFX.Enable();
         }
     }
 

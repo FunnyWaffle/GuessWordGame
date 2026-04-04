@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.ThirdPersonGame.Controllers.DanceMinigame;
 using Assets.Scripts.ThirdPersonGame.Controllers.LevelSelection;
 using Assets.Scripts.ThirdPersonGame.Core;
+using Assets.Scripts.ThirdPersonGame.Core.Minigames;
 using Assets.Scripts.ThirdPersonGame.View;
 using Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint;
 using Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint.LevelSelection;
@@ -66,13 +67,21 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             var inventory = _game.CreateInventory();
             CreateInventoryController(inventory);
 
-            var player = _game.CreatePlayer(playerMover, playerRotator, inventory, playerView.CharacterController, animator);
+            var playerVfx = new VFX(playerView.VFXEffects);
+
+            var player = _game.CreatePlayer(playerMover, playerRotator, inventory, playerView.CharacterController, animator,
+                playerVfx, playerView.AudioSource);
             player.BehaviourStateChanged += HandlePlayerBehaviourStateChange;
             player.DanceStarted += HandlePlayerDanceStart;
             player.DanceInterrupted += HandlePlayerDanceInterrupt;
 
             new DanceActionZoneController(player, _levelUIRoot.ActionZones);
             new DanceScoreController(player.DanceScore, _levelUIRoot.DanceScoreUI);
+
+            foreach (var clip in playerView.DanceClips)
+            {
+                DanceMusic.AddClip(clip);
+            }
         }
 
         private void CreateInventoryController(Inventory inventory)

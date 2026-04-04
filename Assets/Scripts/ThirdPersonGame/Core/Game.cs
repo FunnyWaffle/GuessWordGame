@@ -59,9 +59,11 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             PlayerRotator playerRotator,
             Inventory inventory,
             Collider collider,
-            Animator animator)
+            Animator animator,
+            VFX playerVfx,
+            AudioSource audioSource)
         {
-            _player = new Player(playerMover, playerRotator, inventory, collider, _input, animator);
+            _player = new Player(playerMover, playerRotator, inventory, collider, _input, animator, playerVfx, audioSource);
             _coinPicker.SetInventoryOwner(_player);
             return _player;
         }

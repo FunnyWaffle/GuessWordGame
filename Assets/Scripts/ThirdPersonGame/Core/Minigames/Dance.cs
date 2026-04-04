@@ -6,14 +6,14 @@ namespace Assets.Scripts.ThirdPersonGame.Core.Minigames
 {
     public class Dance
     {
-        private readonly float _danceDuration = 15f;
         private readonly float _timeBetweenActions = 1.2f;
         private readonly float _actionThreshold = 0.3f;
         private readonly float _actionDuration = 1f;
-        private readonly int _actionCountPerDance;
 
         private Coroutine _danceUpdate;
 
+        private float _danceDuration;
+        private int _actionCountPerDance;
         private float _currentTime;
         private float _nextActionEndTime;
         private float _currentActionEndTime;
@@ -27,13 +27,11 @@ namespace Assets.Scripts.ThirdPersonGame.Core.Minigames
         public event Action<bool> ActionCompleted;
         public event Action<bool> DanceSucceded;
 
-        public Dance()
+        public void Start(float danceDuration)
         {
+            _danceDuration = danceDuration;
             _actionCountPerDance = (int)(_danceDuration / _timeBetweenActions);
-        }
 
-        public void Start()
-        {
             _currentActionEndTime = _timeBetweenActions;
             _nextActionEndTime = _timeBetweenActions;
             _succeededActionCount = 0;
