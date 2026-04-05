@@ -28,7 +28,7 @@ namespace Assets.Scripts.ThirdPersonGame.Core
 
             _player.forward = Vector3.Slerp(_player.forward, targetDirection, Time.deltaTime * 10f);
 
-            _animator.SetFloat("RotationAngle", yawDelta / Time.deltaTime);
+            _animator.SetFloat(MovementAnimatorParameters.RotationAngle, yawDelta / Time.deltaTime);
         }
     }
 }

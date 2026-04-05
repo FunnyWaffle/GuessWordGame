@@ -66,6 +66,15 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             EnableJumpAnimation(isGrounded, isJumping);
         }
 
+        public bool IsGrounded()
+        {
+            var isHited = Physics.Raycast(_playerRig.position, Vector3.down,
+                _characterController.skinWidth + float.Epsilon,
+                Layers.GetLayerIndex(LayerName.RaycastIgnore),
+                 QueryTriggerInteraction.Ignore);
+            return isHited;
+        }
+
         private void UpdateMovementVelocity(Vector2 input)
         {
             var direction = input.x * _playerRig.right +
@@ -96,15 +105,6 @@ namespace Assets.Scripts.ThirdPersonGame.Core
             }
 
             return currentAcceleration;
-        }
-
-        private bool IsGrounded()
-        {
-            var isHited = Physics.Raycast(_playerRig.position, Vector3.down,
-                _characterController.skinWidth + float.Epsilon,
-                Layers.GetLayerIndex(LayerName.RaycastIgnore),
-                 QueryTriggerInteraction.Ignore);
-            return isHited;
         }
 
         private void UpdateJumpVelocity(bool isGrounded, bool isJumping)
@@ -140,16 +140,16 @@ namespace Assets.Scripts.ThirdPersonGame.Core
         private void EnableMovementAnimation()
         {
             var localVelocity = _playerRig.InverseTransformDirection(_currentMovementVelocity);
-            _animator.SetFloat("ForwardSpeed", localVelocity.z / _maxMovementVelocity.z);
-            _animator.SetFloat("SideSpeed", localVelocity.x / _maxMovementVelocity.x);
+            _animator.SetFloat(MovementAnimatorParameters.ForwardSpeed, localVelocity.z / _maxMovementVelocity.z);
+            _animator.SetFloat(MovementAnimatorParameters.SideSpeed, localVelocity.x / _maxMovementVelocity.x);
         }
 
         private void EnableJumpAnimation(bool isGrounded, bool isJumping)
         {
             if (isJumping)
-                _animator.SetTrigger("IsJumpReleased");
+                _animator.SetTrigger(MovementAnimatorParameters.IsJumpReleased);
 
-            _animator.SetBool("Grounded", isGrounded);
+            _animator.SetBool(MovementAnimatorParameters.Grounded, isGrounded);
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using Assets.Scripts.ThirdPersonGame.Controllers.LevelSelection;
+﻿using Assets.Scripts.ThirdPersonGame.Controllers.DanceMinigame;
+using Assets.Scripts.ThirdPersonGame.Controllers.LevelSelection;
 using Assets.Scripts.ThirdPersonGame.Core;
+using Assets.Scripts.ThirdPersonGame.Core.Minigames;
 using Assets.Scripts.ThirdPersonGame.View;
 using Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint;
 using Assets.Scripts.ThirdPersonGame.View.UI.EntryPoint.LevelSelection;
@@ -39,12 +41,15 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
         private LevelSelectionMenuController CreateLevelSelectionMenuController(LevelSelectionMenu levelSelectionMenu) =>
            new(_game, levelSelectionMenu);
 
-        private void HandlePlayerSpawnEvent(GameObject player, GameObject camera)
+        private void HandlePlayerSpawnEvent(GameObject playerGameObject, GameObject camera)
         {
-            var playerView = player.GetComponent<PlayerView>();
+            var playerView = playerGameObject.GetComponent<PlayerView>();
+
+            var animator = new Core.Animator(playerView.Animator, playerView.AnimatorStates.ToDictionary());
+
             var playerMover = _game.CreatePlayerMover(
                 playerView.CharacterController,
-                playerView.Animator,
+                animator,
                 playerView.transform,
                 playerView.MovementVelocity,
                 playerView.JumpForce,
@@ -55,14 +60,28 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             cinechine.Target.TrackingTarget = playerView.CharacterController.transform;
 
             var playerRotator = _game.CreatePlayerRotator(playerView.CharacterController.transform, camera.transform,
-                playerView.Animator);
+                animator);
 
             new PlayerController(playerView, playerMover, playerRotator);
 
             var inventory = _game.CreateInventory();
             CreateInventoryController(inventory);
 
-            _game.CreatePlayer(playerMover, playerRotator, inventory, playerView.CharacterController);
+            var playerVfx = new VFX(playerView.VFXEffects);
+
+            var player = _game.CreatePlayer(playerMover, playerRotator, inventory, playerView.CharacterController, animator,
+                playerVfx, playerView.AudioSource);
+            player.BehaviourStateChanged += HandlePlayerBehaviourStateChange;
+            player.DanceStarted += HandlePlayerDanceStart;
+            player.DanceInterrupted += HandlePlayerDanceInterrupt;
+
+            new DanceActionZoneController(player, _levelUIRoot.ActionZones);
+            new DanceScoreController(player.DanceScore, _levelUIRoot.DanceScoreUI);
+
+            foreach (var clip in playerView.DanceClips)
+            {
+                DanceMusic.AddClip(clip);
+            }
         }
 
         private void CreateInventoryController(Inventory inventory)
@@ -75,6 +94,21 @@ namespace Assets.Scripts.ThirdPersonGame.Controllers
             var areaView = areaObject.GetComponent<CoinsSpawnAreaView>();
             var area = _game.CreateCoinsSpawnArea(areaView.BoxCollider);
             new CoinsSpawnAreaController(area, areaView);
+        }
+
+        private void HandlePlayerBehaviourStateChange(CharacterBehaviourState characterBehaviourState)
+        {
+            _levelUIRoot.ChangeStateView.SetState(characterBehaviourState);
+        }
+
+        private void HandlePlayerDanceStart(object sender, System.EventArgs e)
+        {
+            _levelUIRoot.ShowDanceMinigameHUD();
+        }
+
+        private void HandlePlayerDanceInterrupt(object sender, System.EventArgs e)
+        {
+            _levelUIRoot.ShowMainHUD();
         }
     }
 }

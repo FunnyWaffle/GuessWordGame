@@ -109,6 +109,33 @@ public partial class @ThirdPersonGameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToggleDanceState"",
+                    ""type"": ""Button"",
+                    ""id"": ""57205b25-5e57-4142-8a5d-553b67a0b0bb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FirstDanceAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""c9ab6b01-277d-4cb7-a677-b3be3f7e2be9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SecondDanceAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""1ab0cf36-835b-4814-bb01-a13cdb683763"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -177,6 +204,39 @@ public partial class @ThirdPersonGameInput: IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bc081d7f-4dc5-4c91-9214-45136faf1ab5"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ToggleDanceState"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c9fa2f15-6866-4a2e-8f3d-b0d3d2f7d3bd"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FirstDanceAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8e55e63f-b948-4612-ab0c-3f9209396fac"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SecondDanceAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -187,6 +247,9 @@ public partial class @ThirdPersonGameInput: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_ToggleDanceState = m_Player.FindAction("ToggleDanceState", throwIfNotFound: true);
+        m_Player_FirstDanceAction = m_Player.FindAction("FirstDanceAction", throwIfNotFound: true);
+        m_Player_SecondDanceAction = m_Player.FindAction("SecondDanceAction", throwIfNotFound: true);
     }
 
     ~@ThirdPersonGameInput()
@@ -269,6 +332,9 @@ public partial class @ThirdPersonGameInput: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Movement;
     private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_ToggleDanceState;
+    private readonly InputAction m_Player_FirstDanceAction;
+    private readonly InputAction m_Player_SecondDanceAction;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -288,6 +354,18 @@ public partial class @ThirdPersonGameInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Jump".
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/ToggleDanceState".
+        /// </summary>
+        public InputAction @ToggleDanceState => m_Wrapper.m_Player_ToggleDanceState;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/FirstDanceAction".
+        /// </summary>
+        public InputAction @FirstDanceAction => m_Wrapper.m_Player_FirstDanceAction;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/SecondDanceAction".
+        /// </summary>
+        public InputAction @SecondDanceAction => m_Wrapper.m_Player_SecondDanceAction;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -320,6 +398,15 @@ public partial class @ThirdPersonGameInput: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @ToggleDanceState.started += instance.OnToggleDanceState;
+            @ToggleDanceState.performed += instance.OnToggleDanceState;
+            @ToggleDanceState.canceled += instance.OnToggleDanceState;
+            @FirstDanceAction.started += instance.OnFirstDanceAction;
+            @FirstDanceAction.performed += instance.OnFirstDanceAction;
+            @FirstDanceAction.canceled += instance.OnFirstDanceAction;
+            @SecondDanceAction.started += instance.OnSecondDanceAction;
+            @SecondDanceAction.performed += instance.OnSecondDanceAction;
+            @SecondDanceAction.canceled += instance.OnSecondDanceAction;
         }
 
         /// <summary>
@@ -337,6 +424,15 @@ public partial class @ThirdPersonGameInput: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @ToggleDanceState.started -= instance.OnToggleDanceState;
+            @ToggleDanceState.performed -= instance.OnToggleDanceState;
+            @ToggleDanceState.canceled -= instance.OnToggleDanceState;
+            @FirstDanceAction.started -= instance.OnFirstDanceAction;
+            @FirstDanceAction.performed -= instance.OnFirstDanceAction;
+            @FirstDanceAction.canceled -= instance.OnFirstDanceAction;
+            @SecondDanceAction.started -= instance.OnSecondDanceAction;
+            @SecondDanceAction.performed -= instance.OnSecondDanceAction;
+            @SecondDanceAction.canceled -= instance.OnSecondDanceAction;
         }
 
         /// <summary>
@@ -391,5 +487,26 @@ public partial class @ThirdPersonGameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ToggleDanceState" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleDanceState(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "FirstDanceAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFirstDanceAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SecondDanceAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSecondDanceAction(InputAction.CallbackContext context);
     }
 }
